@@ -135,6 +135,10 @@ class AutotileExpander:
             autotileOrd += 32
         return self._expandedAutotile
 
+    def _printVerbose(self, message):
+        if self._verbose is True:
+            print(message)
+            
     def _checkArguments(self, step):
         if step == "Input exists":
             if os.path.exists(self._inputFilename) is False:
@@ -159,6 +163,14 @@ class AutotileExpander:
             if image.size != (64, 96):
                 print("The input autotile \"{0}\" does not have the right size.\nIt must be 64 * 96 pixels wide. Please refer to tileA2 formatting from RPG Maker VX / VX Ace.".format(self._inputFilename))
                 raise SystemExit
+        elif step == "Output without extension":
+            if self._outputFilename.lower().endswith(".png") is False and self._askConfirmation is True:
+                answerIgnoreNoExtension = self._interacter.askString("The output file \"{0}\" does not a a .png extension. Shall I add the extension? (Y/n)".format(self._outputFilename))
+                if answerIgnoreNoExtension.lower().split(" ")[0] == "y":
+                    self._outputFilename += ".png"
+                    print("Ok, I'm adding the extension. The output file is now \"{0}\".".format(self._outputFilename))
+                else:
+                    print("Ok, I won't do anything about the extension.")
         elif step == "Output already exists":
             if os.path.exists(self._outputFilename) == True and self._askConfirmation is True:
                 answerIgnoreExistingOutput = self._interacter.askString("The output file \"{0}\" already exists. Do you want to overwrite it? (y/N)".format(self._outputFilename))
@@ -168,7 +180,7 @@ class AutotileExpander:
                 else:
                     print("Fine, I'll overwrite the existing file.")
 
-    def launchScript(self, inputFilename, outputFilename, askConfirmation, verbose, testSteps=["Input exists", "Input type", "Input validity", "Input size", "Output already exists"]):
+    def launchScript(self, inputFilename, outputFilename, askConfirmation, verbose, testSteps=["Input exists", "Input type", "Input validity", "Input size", "Output without extension", "Output already exists"]):
         self._inputFilename, self._outputFilename, self._askConfirmation, self._verbose = inputFilename.replace("\\", "/"), outputFilename.replace("\\", "/"), askConfirmation, verbose
         self._interacter = Interacter()
         i = True
@@ -177,6 +189,7 @@ class AutotileExpander:
             i += 1
         self.expandAutotile(self._inputFilename)
         self._expandedAutotile.save(self._outputFilename, "PNG")
+        self._printVerbose("Successfully created the autotile \"{0}\"!".format(self._outputFilename))
 
 if __name__ == "__main__":
     autotileExpander = AutotileExpander()
@@ -205,6 +218,7 @@ if __name__ == "__main__":
         autotileExpander.launchScript(inputFile, outputFile, askConfirmation, verbose)
     else:
         if len(argumentsUsed) > 1:
+            print(argumentsUsed, verbose, sys.argv[1:])
             print("Error: Too many input autotiles. There must only be one (one argument).")
         elif len(argumentsUsed) < 1:
             print("Error: No input autotile specified.")
