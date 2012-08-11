@@ -163,12 +163,22 @@ class AutotileExpander:
         elif step == "Input size":
             image = Image.open(self._inputFilename)
             if image.size != (64, 96):
-                print("The input autotile does not have the right size. It must be 64 * 96 pixels wide. Please refer to tileA2 formatting from RPG Maker VX / VX Ace.")
+                print("The input autotile \"{0}\" does not have the right size.\nIt must be 64 * 96 pixels wide. Please refer to tileA2 formatting from RPG Maker VX / VX Ace.".format(self._inputFilename))
                 raise SystemExit
             else:
                 return True
+        elif step == "Output already exists":
+            if os.path.exists(self._outputFilename) == True and self._askConfirmation is True:
+                answerIgnoreExistingOutput = self._interacter.askString("The output file \"{0}\" already exists. Do you want to overwrite it? (y/N)".format(self._outputFilename))
+                if answerIgnoreExistingOutput.lower().split(" ")[0] != "y":
+                    print("Ok, I'm stopping here.")
+                    raise SystemExit
+                else:
+                    print("Fine, I'll overwrite the existing file.")
+                    return True
+            return True
 
-    def launchScript(self, inputFilename, outputFilename, askConfirmation, verbose, testSteps=["Input exists", "Input type", "Input validity", "Input size"]):
+    def launchScript(self, inputFilename, outputFilename, askConfirmation, verbose, testSteps=["Input exists", "Input type", "Input validity", "Input size", "Output already exists"]):
         self._inputFilename, self._outputFilename, self._askConfirmation, self._verbose = inputFilename, outputFilename, askConfirmation, verbose
         self._interacter = Interacter()
         testPassed, i = True, 0
