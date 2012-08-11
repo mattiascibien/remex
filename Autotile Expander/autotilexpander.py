@@ -183,6 +183,9 @@ if __name__ == "__main__":
         from interacter import *
         autotileExpander.launchScript(inputFile, outputFile, askConfirmation, verbose)
     else:
-        print("Error: Wrong number of arguments for the input file.")
+        if len(argumentsUsed) > 1:
+            print("Error: Wrong number of arguments for the input file.")
+        elif len(argumentsUsed) < 1:
+            print("Error: No input file specified.")
         autotileExpander.printHelp()
         raise SystemExit
