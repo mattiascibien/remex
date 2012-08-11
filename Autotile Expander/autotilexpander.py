@@ -138,13 +138,13 @@ class AutotileExpander:
     def _checkArguments(self, step):
         if step == "Input exists":
             if os.path.exists(self._inputFilename) is False:
-                print("The input file \"{0}\" does not exist.".format(self._inputFilename))
+                print("The input autotile \"{0}\" does not exist.".format(self._inputFilename))
                 raise SystemExit
             else:
                 return True
         elif step == "Input type":
             if ".png" not in self._inputFilename.lower() and self._askConfirmation is True:
-                answerIgnoreType = self._interacter.askString("The input file does not seem to be a PNG image. Continue? (y/N)")
+                answerIgnoreType = self._interacter.askString("The input autotile does not seem to be a PNG image. Continue? (y/N)")
                 if answerIgnoreType.lower().split(" ")[0] != "y":
                     print("Fine, just choose a PNG next time.")
                     raise SystemExit
@@ -156,7 +156,14 @@ class AutotileExpander:
             try:
                 image = Image.open(self._inputFilename)
             except IOError:
-                print("The input file \"{0}\" is not a valid PNG image.".format(self._inputFilename))
+                print("The input autotile \"{0}\" is not a valid PNG image.".format(self._inputFilename))
+                raise SystemExit
+            else:
+                return True
+        elif step == "Input size":
+            image = Image.open(self._inputFilename)
+            if image.size != (64, 96):
+                print("The input autotile does not have the right size. It must be 64 * 96 pixels wide. Please refer to tileA2 formatting from RPG Maker VX / VX Ace.")
                 raise SystemExit
             else:
                 return True
@@ -198,8 +205,8 @@ if __name__ == "__main__":
         autotileExpander.launchScript(inputFile, outputFile, askConfirmation, verbose)
     else:
         if len(argumentsUsed) > 1:
-            print("Error: Wrong number of arguments for the input file.")
+            print("Error: Too many input autotiles. There must only be one (one argument).")
         elif len(argumentsUsed) < 1:
-            print("Error: No input file specified.")
+            print("Error: No input autotile specified.")
         autotileExpander.printHelp()
         raise SystemExit
