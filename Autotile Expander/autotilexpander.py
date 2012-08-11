@@ -138,7 +138,7 @@ class AutotileExpander:
     def _checkArguments(self, step):
         if step == "Input exists":
             if os.path.exists(self._inputFilename) is False:
-                print("The input file {0} does not exist.".format(self._inputFilename))
+                print("The input file \"{0}\" does not exist.".format(self._inputFilename))
                 raise SystemExit
             else:
                 return True
@@ -156,7 +156,7 @@ class AutotileExpander:
             try:
                 image = Image.open(self._inputFilename)
             except IOError:
-                print("The input file is not a valid PNG image.")
+                print("The input file \"{0}\" is not a valid PNG image.".format(self._inputFilename))
                 raise SystemExit
             else:
                 return True
