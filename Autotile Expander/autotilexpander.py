@@ -136,7 +136,9 @@ class AutotileExpander:
         return self._expandedAutotile
 
     def _checkArguments(self, step):
-        if step == "Input type":
+        if step == "Input exists":
+            pass
+        elif step == "Input type":
             if ".png" not in self._inputFilename.lower() and self._askConfirmation is True:
                 answerIgnoreType = self._interacter.askString("The input file does not seem to be a PNG image. Continue? (y/N)")
                 if answerIgnoreType.lower().split(" ")[0] != "y":
@@ -146,8 +148,16 @@ class AutotileExpander:
                     print("Ok, let's continue if you want.")
                     return True
             return True
+        elif step == "Input validity":
+            try:
+                image = Image.open(self._inputFilename)
+            except IOError:
+                print("The input file is not a valid PNG image.")
+                raise SystemExit
+            else:
+                return True
 
-    def launchScript(self, inputFilename, outputFilename, askConfirmation, verbose, testSteps=["Input type",]):
+    def launchScript(self, inputFilename, outputFilename, askConfirmation, verbose, testSteps=["Input exists", "Input type", "Input validity", "Input size"]):
         self._inputFilename, self._outputFilename, self._askConfirmation, self._verbose = inputFilename, outputFilename, askConfirmation, verbose
         self._interacter = Interacter()
         testPassed, i = True, 0
