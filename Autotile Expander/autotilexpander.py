@@ -137,7 +137,11 @@ class AutotileExpander:
 
     def _checkArguments(self, step):
         if step == "Input exists":
-            pass
+            if os.path.exists(self._inputFilename) is False:
+                print("The input file {0} does not exist.".format(self._inputFilename))
+                raise SystemExit
+            else:
+                return True
         elif step == "Input type":
             if ".png" not in self._inputFilename.lower() and self._askConfirmation is True:
                 answerIgnoreType = self._interacter.askString("The input file does not seem to be a PNG image. Continue? (y/N)")
