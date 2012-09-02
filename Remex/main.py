@@ -244,16 +244,20 @@ class TilesetGenerator(Script):
 
 if __name__ == "__main__":
     parser = ArgumentParser()
-    parser.add_argument("-v", "--verbose", action="store_true", help="Starts the program in verbose mode: it prints detailed information on the process.")
-    parser.add_argument("-f", "--force", action="store_false", dest="askConfirmation", help="Forces the script to be executed without asking you anything. The script will overwrite the output file without warning you if it already exists. Furthermore, it won't ask add an extension to the output file if it is lacking.")
     subparsers = parser.add_subparsers(title="Commands", description="The command to execute", dest="command")
     expandSubCommand = subparsers.add_parser("expand", help="Autotile Expander. Expands an autotile from RPG Maker VX or VX Ace into a grid containing all the possible cases.")
     expandSubCommand.add_argument("-o", "--output", metavar="outputAutotile", dest="outputAutotile", default="expandedAutotile.png", help="The output file (the expanded autotile). By default, it is \"expandedAutotile.png\", located in the directory in which you launch the script. The script will ask you whether it should overwrite the file if it already exists, unless you used the force option.")
     expandSubCommand.add_argument("inputAutotile", help="The autotile to expand. It must follow a few rules. It must be a PNG image, 64 * 96 wide. It must use RPG Maker VX or VX Ace's TileA2 formatting.")
+    expandSubCommand.add_argument("-v", "--verbose", action="store_true", help="Starts the program in verbose mode: it prints detailed information on the process.")
+    expandSubCommand.add_argument("-f", "--force", action="store_false", dest="askConfirmation", help="Forces the script to be executed without asking you anything. The script will overwrite the output file without warning you if it already exists. Furthermore, it won't ask add an extension to the output file if it is lacking.")
     makeTilesetSubCommand = subparsers.add_parser("maketileset", help="Tileset Generator. Generates a tileset for Tiled map editor with an expanded autotile. You can use it directly (but manually) in your maps, or use it with the Rule Maker to make an automatic automapping rule.")
     makeTilesetSubCommand.add_argument("-o", "--output", metavar="outputTileset", dest="outputTileset", default="expandedAutotileTileset.tsx", help="The output file (the tileset). By default, it is \"expandedAutotileTileset.tsx\", located in the directory in which you launch the script. The script will ask you whether it should overwrite the file if it already exists, unless you used the force option.")
     makeTilesetSubCommand.add_argument("inputExpandedAutotile", help="The expanded autotile to make a tileset with. It must be a PNG image, 256 * 192 wide. To get this expanded autotile, use this autotile expander featured with Remex (with the command \"expand\").")
+    makeTilesetSubCommand.add_argument("-v", "--verbose", action="store_true", help="Starts the program in verbose mode: it prints detailed information on the process.")
+    makeTilesetSubCommand.add_argument("-f", "--force", action="store_false", dest="askConfirmation", help="Forces the script to be executed without asking you anything. The script will overwrite the output file without warning you if it already exists. Furthermore, it won't ask add an extension to the output file if it is lacking.")
     makeRuleSubCommand = subparsers.add_parser("makerule", help="Rule Maker. Generates an automapping rule for Tiled map editor using a tileset of an expanded autotile. It enables you to map autotiles automatically, without worrying about the precise case to use.")
+    makeRuleSubCommand.add_argument("-v", "--verbose", action="store_true", help="Starts the program in verbose mode: it prints detailed information on the process.")
+    makeRuleSubCommand.add_argument("-f", "--force", action="store_false", dest="askConfirmation", help="Forces the script to be executed without asking you anything. The script will overwrite the output file without warning you if it already exists. Furthermore, it won't ask add an extension to the output file if it is lacking.")
     answers = vars(parser.parse_args())
     print(answers)
     command, verbose, askConfirmation = answers["command"], answers["verbose"], answers["askConfirmation"]
