@@ -4,14 +4,23 @@ from PIL import ImageTk
 from PIL import Image as ImagePIL
 from tkinter import Tk, W, ttk, filedialog, messagebox
 
-class ScriptGUI:
-    def __init__(self, frame, noInputFileFound, noInputFileFoundLonger, noInputFileFoundExplanation, proceedText, doItAgainText, outputFileTypeDescription, outputFileExtension, defaultOutputFilename, inputFileTypeDescription, inputFileExtension):
+class GUI:
+    def _reloadFrame(self):
+        self._frame.grid_forget()
+        self._frame = ttk.Frame(self._windowHandler)
+        self._frame.grid(column=0, row=0)
+
+    def _spaceWidgets(self):
+        for child in self._frame.winfo_children(): child.grid_configure(padx=10, pady=10)
+
+class ScriptGUI(GUI):
+    def __init__(self, frame, windowHandler, noInputFileFound, noInputFileFoundLonger, noInputFileFoundExplanation, proceedText, doItAgainText, outputFileTypeDescription, outputFileExtension, defaultOutputFilename, inputFileTypeDescription, inputFileExtension):
         self._noInputFileFound, self._noInputFileFoundLonger, self._noInputFileFoundExplanation = noInputFileFound, noInputFileFoundLonger, noInputFileFoundExplanation
         self._proceedText, self._doItAgainText = proceedText, doItAgainText
         self._outputFileTypeDescription, self._outputFileExtension, self._defaultOutputFilename = outputFileTypeDescription, outputFileExtension, defaultOutputFilename
         self._inputFileTypeDescription, self._inputFileExtension = inputFileTypeDescription, inputFileExtension
         self._inputFilename, self._formerInputFilename, self._inputCorrectOnce = "", "", False
-        self._frame = frame
+        self._frame, self._windowHandler = frame, windowHandler
 
     def _prepareFirstStepModules(self):
         pass
@@ -54,11 +63,12 @@ class ScriptGUI:
 
     def _inputIsCorrect(self, emptyStringWarning=True):
         if self._inputFilename != "":
-            self._checkInput()
+            return self._checkInput()
         else:
+            print("empty")
             if emptyStringWarning:
                 messagebox.showwarning(title=self._noInputFileFound, message=self._noInputFileFoundLonger, detail=self._noInputFileFoundExplanation)
-        return False
+            return False
 
     def _proceed(self):
         if self._inputIsCorrect():
@@ -76,20 +86,12 @@ class ScriptGUI:
         self._frame.mainloop()
 
     def _saveFileDialog(self):
-        saveFilename = filedialog.asksaveasfilename(filetypes=[(self._outputFileTypeDescription, "*" + self._outputFileExtension)], initialfile=self._defaultOutputFilename)
-        if saveFilename != "":
-            if saveFilename.lower().endswith(self._outputFileExtension) is False:
-                saveFilename += self._outputFileExtension
+        self._saveFilename = filedialog.asksaveasfilename(filetypes=[(self._outputFileTypeDescription, "*" + self._outputFileExtension)], initialfile=self._defaultOutputFilename)
+        if self._saveFilename != "":
+            if self._saveFilename.lower().endswith(self._outputFileExtension) is False:
+                self._saveFilename += self._outputFileExtension
             self._saveData()
         self._frame.mainloop()
-
-    def _reloadFrame(self):
-        self._frame.grid_forget()
-        self._frame = ttk.Frame(self._windowHandler)
-        self._frame.grid(column=0, row=0)
-
-    def _spaceWidgets(self):
-        for child in self._frame.winfo_children(): child.grid_configure(padx=10, pady=10)
 
 class ExpanderGUI(ScriptGUI):
 
@@ -115,26 +117,25 @@ class ExpanderGUI(ScriptGUI):
                 messagebox.showwarning(title="The autotile does not have the right size", message="The autotile must be 64 * 96 pixels wide.", detail="Refer to the tileA2 formatting from RPG Maker VX or VX Ace.")
 
     def _showLoadedInput(self):
-        self._imageAutotile = ImagePIL.open(self._autotileFilename)
-        imageWidget = ImageTk.PhotoImage(self._imageAutotile)
-        self._autotileWidget["image"] = imageWidget
+        self._imageAutotile = ImagePIL.open(self._inputFilename)
+        self._imageWidget = ImageTk.PhotoImage(self._imageAutotile)
+        self._autotileWidget["image"] = self._imageWidget
         self._autotileWidgetText["text"] = "Autotile to expand:"  
 
     def _makeOutput(self):
         autotileExpander = AutotileExpander("autotile", ".png")
-        self._expandedAutotile = autotileExpander.expandAutotile(self._autotileFilename)
+        self._expandedAutotile = autotileExpander.expandAutotile(self._inputFilename)
 
     def _showOutput(self):
-        imageWidget = ImageTk.PhotoImage(self._expandedAutotile)
-        self._expandedAutotileWidget = ttk.Label(self._frame, compound="image", image=imageWidget)
+        self._imageWidget = ImageTk.PhotoImage(self._expandedAutotile)
+        self._expandedAutotileWidget = ttk.Label(self._frame, compound="image", image=self._imageWidget)
         self._expandedAutotileWidget.grid(column=0, row=0)
 
     def _saveData(self):
-        self._expandedAutotile.save(saveFilename.replace("\\", "/"), "PNG")
+        self._expandedAutotile.save(self._saveFilename.replace("\\", "/"), "PNG")
 
 
-
-class RemexGUI:
+class RemexGUI(GUI):
     def __init__(self):
         self._initializeTkinter()
         self._prepareStartWindow()
@@ -157,14 +158,6 @@ class RemexGUI:
         self._windowHandler.bind('<Escape>', self._quit)
         self._windowHandler.wm_iconbitmap("NuvolaTileIcon.ico")
 
-    def _spaceWidgets(self):
-        for child in self._frame.winfo_children(): child.grid_configure(padx=10, pady=10)
-
-    def _reloadFrame(self):
-        self._frame.grid_forget()
-        self._frame = ttk.Frame(self._windowHandler)
-        self._frame.grid(column=0, row=0)
-
     def _prepareStartWindow(self):
         self._frame = ttk.Frame(self._windowHandler)
         self._expanderButton = ttk.Button(self._frame, text="Expand an autotile", command=self._prepareExpanderWindow)
@@ -177,7 +170,8 @@ class RemexGUI:
         self._spaceWidgets()
 
     def _prepareExpanderWindow(self):
-        self._reloadFrame()
+        expanderGUI = ExpanderGUI(self._frame, self._windowHandler, "No autotile to expand", "a", "a", "Expand the autotile!", "Expand another autotile", "Portable Network Graphics", ".png", "expandedAutotile.png", "Portable Network Graphics", ".png")
+        expanderGUI._prepareFirstStepWindow()
 
     def _prepareTilesetGeneratorWindow(self):
         self._reloadFrame()
