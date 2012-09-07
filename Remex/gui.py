@@ -3,6 +3,7 @@ from main import *
 from PIL import ImageTk
 from PIL import Image as ImagePIL
 from tkinter import Tk, W, ttk, filedialog, messagebox
+from os import path
 
 class GUI:
     def _reloadFrame(self):
@@ -62,12 +63,12 @@ class ScriptGUI(GUI):
             self._frame.mainloop()
 
     def _inputIsCorrect(self, emptyStringWarning=True):
-        if self._inputFilename != "":
+        if self._inputFilename != "" and path.exists(self._inputFilename) is True:
             return self._checkInput()
         else:
             print("empty")
             if emptyStringWarning:
-                messagebox.showwarning(title=self._noInputFileFound, message=self._noInputFileFoundLonger, detail=self._noInputFileFoundExplanation)
+                messagebox.showwarning(title=self._noInputFileFound, message=self._noInputFileFoundLonger, detail=self._noInputFileFoundExplanation.format(self._inputFilename))
             return False
 
     def _proceed(self):
@@ -170,7 +171,7 @@ class RemexGUI(GUI):
         self._spaceWidgets()
 
     def _prepareExpanderWindow(self):
-        expanderGUI = ExpanderGUI(self._frame, self._windowHandler, "No autotile to expand", "a", "a", "Expand the autotile!", "Expand another autotile", "Portable Network Graphics", ".png", "expandedAutotile.png", "Portable Network Graphics", ".png")
+        expanderGUI = ExpanderGUI(self._frame, self._windowHandler, "No autotile to expand", "No autotile to expand was found.", "Please make sure that the file \"{0}\" exists.", "Expand the autotile!", "Expand another autotile", "Portable Network Graphics", ".png", "expandedAutotile.png", "Portable Network Graphics", ".png")
         expanderGUI._prepareFirstStepWindow()
 
     def _prepareTilesetGeneratorWindow(self):
