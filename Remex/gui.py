@@ -135,6 +135,47 @@ class ExpanderGUI(ScriptGUI):
     def _saveData(self):
         self._expandedAutotile.save(self._saveFilename.replace("\\", "/"), "PNG")
 
+class TilesetGeneratorGUI(ScriptGUI):
+
+    def _prepareFirstStepModules(self):
+        self._loadButton = ttk.Button(self._frame, text="Open...", command=self._inputChoice)
+        self._loadButtonText = ttk.Label(self._frame, text="Choose an expanded autotile to make a tileset with.\nPNG only, 256 per 192 pixels. You can expand an autotile from RPG Maker VX / VX Ace with this software (Main menu > Expand an autotile).")
+        self._autotileWidget = ttk.Label(self._frame, compound="image")
+        self._autotileWidgetText = ttk.Label(self._frame)
+        self._loadButton.grid(column=1, row=0)
+        self._loadButtonText.grid(column=0, row=0, sticky=W)
+        self._autotileWidget.grid(column=1, row=1)
+        self._autotileWidgetText.grid(column=0, row=1, sticky=W)
+
+    def _checkInput(self):
+        try:
+            image = ImagePIL.open(self._inputFilename)
+        except IOError:
+            messagebox.showwarning(title="The autotile is not a PNG image", message="The autotile to expand is not a PNG image.", detail="You must choose a PNG file.")
+        else:
+            if image.size == (256, 192): 
+                return True
+            else:
+                messagebox.showwarning(title="The autotile does not have the right size", message="The expanded autotile must be 256 * 192 pixels wide.", detail="You can expand an autotile from RPG Maker VX / VX Ace with this software (Main menu > Expand an autotile).")
+
+    def _showLoadedInput(self):
+        self._imageAutotile = ImagePIL.open(self._inputFilename)
+        self._imageWidget = ImageTk.PhotoImage(self._imageAutotile)
+        self._autotileWidget["image"] = self._imageWidget
+        self._autotileWidgetText["text"] = "Expanded autotile to make a tileset with:"  
+
+    def _makeOutput(self):
+        tilesetGenerator = TilesetGenerator("expanded autotile", ".tsx")
+        self._tileset = tilesetGenerator.makeXML(self._inputFilename)
+
+    def _showOutput(self):
+        self._expandedAutotileWidget = ttk.Label(self._frame, text="...")
+        self._expandedAutotileWidget.grid(column=0, row=0)
+
+    def _saveData(self):
+        with open(self._saveFilename, "w") as outputFile:
+            self._tileset.writexml(outputFile, addindent="  ", newl="\n", encoding="UTF-8")
+        self._tileset.unlink()
 
 class RemexGUI(GUI):
     def __init__(self):
@@ -175,7 +216,8 @@ class RemexGUI(GUI):
         expanderGUI._prepareFirstStepWindow()
 
     def _prepareTilesetGeneratorWindow(self):
-        self._reloadFrame()
+        tilesetGeneratorGUI = TilesetGeneratorGUI(self._frame, self._windowHandler, "No expanded autotile", "No expanded autotile to make a tileset with was found.", "Please make sure that the file \"{0}\" exists.", "Make a tileset!", "Make another tileset", "Tileset for Tiled", ".tsx", "expandedAutotileTileset.tsx", "Portable Network Graphics", ".png")
+        tilesetGeneratorGUI._prepareFirstStepWindow()
 
     def _prepareRuleMakerWindow(self):
         self._reloadFrame()
