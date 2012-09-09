@@ -2,7 +2,7 @@ from argparse import ArgumentParser
 from main import *
 from PIL import ImageTk
 from PIL import Image as ImagePIL
-from tkinter import Tk, W, S, ttk, filedialog, messagebox
+from tkinter import Tk, W, S, ttk, filedialog, messagebox, Text, INSERT, VERTICAL, HORIZONTAL
 from os import path
 
 class GUI:
@@ -86,9 +86,9 @@ class ScriptGUI(GUI):
         self._reloadFrame()
         self._showOutput()
         self._saveButton = ttk.Button(self._frame, text="Save as...", command=self._saveFileDialog)
-        self._saveButton.grid(column=0, row=1)
+        self._saveButton.grid(column=0, row=self._frame.grid_size()[1])
         self._doItAgainButton = ttk.Button(self._frame, text=self._doItAgainText, command=self._prepareFirstStepWindow)
-        self._doItAgainButton.grid(column=0, row=2)
+        self._doItAgainButton.grid(column=0, row=self._frame.grid_size()[1])
         self._backToMainMenu = ttk.Button(self._frame, text="Back to main menu", command=self._restart)
         self._backToMainMenu.grid(column=0, row=self._frame.grid_size()[1], sticky=(W,S))
         self._spaceWidgets()
@@ -177,8 +177,12 @@ class TilesetGeneratorGUI(ScriptGUI):
         self._tileset = tilesetGenerator.makeXML(self._inputFilename)
 
     def _showOutput(self):
-        self._expandedAutotileWidget = ttk.Label(self._frame, text="...")
+        self._expandedAutotileWidget = Text(self._frame, wrap="none")
+        self._expandedAutotileWidget.insert(INSERT, self._tileset.toprettyxml(indent="  ", newl="\n", encoding="UTF-8") )
+        self._expandedAutotileScrollbarX = ttk.Scrollbar(self._frame, orient=HORIZONTAL, command=self._expandedAutotileWidget.xview)
         self._expandedAutotileWidget.grid(column=0, row=0)
+        self._expandedAutotileScrollbarX.grid(column=0, row=1)
+        self._expandedAutotileWidget["xscrollcommand"] = self._expandedAutotileScrollbarX.set
 
     def _saveData(self):
         with open(self._saveFilename, "w") as outputFile:

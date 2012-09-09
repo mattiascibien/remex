@@ -243,6 +243,9 @@ class TilesetGenerator(Script):
             xmlData.writexml(outputFile, addindent="  ", newl="\n", encoding="UTF-8")
         xmlData.unlink()
 
+class RuleMaker(Script):
+    pass
+
 if __name__ == "__main__":
     parser = ArgumentParser()
     subparsers = parser.add_subparsers(title="Commands", description="The command to execute", dest="command")
