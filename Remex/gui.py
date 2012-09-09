@@ -2,7 +2,7 @@ from argparse import ArgumentParser
 from main import *
 from PIL import ImageTk
 from PIL import Image as ImagePIL
-from tkinter import Tk, W, ttk, filedialog, messagebox
+from tkinter import Tk, W, S, ttk, filedialog, messagebox
 from os import path
 
 class GUI:
@@ -14,14 +14,18 @@ class GUI:
     def _spaceWidgets(self):
         for child in self._frame.winfo_children(): child.grid_configure(padx=10, pady=10)
 
+    def _restart(self):
+        self._reloadFrame()
+        self._prepareStartWindow()
+
 class ScriptGUI(GUI):
-    def __init__(self, frame, windowHandler, noInputFileFound, noInputFileFoundLonger, noInputFileFoundExplanation, proceedText, doItAgainText, outputFileTypeDescription, outputFileExtension, defaultOutputFilename, inputFileTypeDescription, inputFileExtension):
+    def __init__(self, frame, windowHandler, noInputFileFound, noInputFileFoundLonger, noInputFileFoundExplanation, proceedText, doItAgainText, outputFileTypeDescription, outputFileExtension, defaultOutputFilename, inputFileTypeDescription, inputFileExtension, prepareStartWindow):
         self._noInputFileFound, self._noInputFileFoundLonger, self._noInputFileFoundExplanation = noInputFileFound, noInputFileFoundLonger, noInputFileFoundExplanation
         self._proceedText, self._doItAgainText = proceedText, doItAgainText
         self._outputFileTypeDescription, self._outputFileExtension, self._defaultOutputFilename = outputFileTypeDescription, outputFileExtension, defaultOutputFilename
         self._inputFileTypeDescription, self._inputFileExtension = inputFileTypeDescription, inputFileExtension
         self._inputFilename, self._formerInputFilename, self._inputCorrectOnce = "", "", False
-        self._frame, self._windowHandler = frame, windowHandler
+        self._frame, self._windowHandler, self._prepareStartWindow = frame, windowHandler, prepareStartWindow
 
     def _prepareFirstStepModules(self):
         pass
@@ -44,6 +48,8 @@ class ScriptGUI(GUI):
     def _prepareFirstStepWindow(self):
         self._reloadFrame()
         self._prepareFirstStepModules()
+        self._backToMainMenu = ttk.Button(self._frame, text="Back to main menu", command=self._restart)
+        self._backToMainMenu.grid(column=0, row=self._frame.grid_size()[1], sticky=(W,S))
         self._spaceWidgets()
 
     def _inputChoice(self):
@@ -83,6 +89,8 @@ class ScriptGUI(GUI):
         self._saveButton.grid(column=0, row=1)
         self._doItAgainButton = ttk.Button(self._frame, text=self._doItAgainText, command=self._prepareFirstStepWindow)
         self._doItAgainButton.grid(column=0, row=2)
+        self._backToMainMenu = ttk.Button(self._frame, text="Back to main menu", command=self._restart)
+        self._backToMainMenu.grid(column=0, row=self._frame.grid_size()[1], sticky=(W,S))
         self._spaceWidgets()
         self._frame.mainloop()
 
@@ -185,10 +193,6 @@ class RemexGUI(GUI):
     def _quit(self, *val):
         self._windowHandler.destroy()
 
-    def _restart(self):
-        self._frame.grid_forget()
-        self._autotileFilename, self._formerAutotileFilename, self._imageCorrectOnce = "", "", False
-        self._prepareStartWindow()
 
     def launch(self, verbose):
         self._verbose = verbose
@@ -199,9 +203,9 @@ class RemexGUI(GUI):
         self._windowHandler.title("Remex")
         self._windowHandler.bind('<Escape>', self._quit)
         self._windowHandler.wm_iconbitmap("NuvolaTileIcon.ico")
+        self._frame = ttk.Frame(self._windowHandler)
 
     def _prepareStartWindow(self):
-        self._frame = ttk.Frame(self._windowHandler)
         self._expanderButton = ttk.Button(self._frame, text="Expand an autotile", command=self._prepareExpanderWindow)
         self._tilesetGeneratorButton = ttk.Button(self._frame, text="Generate a tileset for Tiled editor from an expanded autotile", command=self._prepareTilesetGeneratorWindow)
         self._ruleMakerButton = ttk.Button(self._frame, text="Make an automapping rule for Tiled editor", command=self._prepareRuleMakerWindow)
@@ -212,11 +216,11 @@ class RemexGUI(GUI):
         self._spaceWidgets()
 
     def _prepareExpanderWindow(self):
-        expanderGUI = ExpanderGUI(self._frame, self._windowHandler, "No autotile to expand", "No autotile to expand was found.", "Please make sure that the file \"{0}\" exists.", "Expand the autotile!", "Expand another autotile", "Portable Network Graphics", ".png", "expandedAutotile.png", "Portable Network Graphics", ".png")
+        expanderGUI = ExpanderGUI(self._frame, self._windowHandler, "No autotile to expand", "No autotile to expand was found.", "Please make sure that the file \"{0}\" exists.", "Expand the autotile!", "Expand another autotile", "Portable Network Graphics", ".png", "expandedAutotile.png", "Portable Network Graphics", ".png", self._prepareStartWindow)
         expanderGUI._prepareFirstStepWindow()
 
     def _prepareTilesetGeneratorWindow(self):
-        tilesetGeneratorGUI = TilesetGeneratorGUI(self._frame, self._windowHandler, "No expanded autotile", "No expanded autotile to make a tileset with was found.", "Please make sure that the file \"{0}\" exists.", "Make a tileset!", "Make another tileset", "Tileset for Tiled", ".tsx", "expandedAutotileTileset.tsx", "Portable Network Graphics", ".png")
+        tilesetGeneratorGUI = TilesetGeneratorGUI(self._frame, self._windowHandler, "No expanded autotile", "No expanded autotile to make a tileset with was found.", "Please make sure that the file \"{0}\" exists.", "Make a tileset!", "Make another tileset", "Tileset for Tiled", ".tsx", "expandedAutotileTileset.tsx", "Portable Network Graphics", ".png", self._prepareStartWindow)
         tilesetGeneratorGUI._prepareFirstStepWindow()
 
     def _prepareRuleMakerWindow(self):
