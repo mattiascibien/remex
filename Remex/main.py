@@ -245,9 +245,282 @@ class TilesetGenerator(Script):
 
 class RuleMaker(Script):
 
+    def _checkInputValidity(self):
+        pass
+
+    def _loadTileset(self):
+        self._tilesetConfig = xml.dom.minidom.parse(self._inputFilename)
+        self._tilesetXML = self._configTileset.documentElement
+        #self._tilesetRegionsConfig = xml.dom.minidom.parse("../Ressources/" + "AutomappingRegions.tsx")
+        self._tilesetRegionsXML = self._configTilesetRegions.documentElement
+        self._configRegle = xml.dom.getDOMImplementation().createDocument(None, "map", None)
+        self._regleXML = self._configRegle.documentElement
+        self._regleXML.setAttribute("version", "1.0")
+        self._regleXML.setAttribute("orientation", "orthogonal")
+        self._regleXML.setAttribute("width", "31")
+        self._regleXML.setAttribute("height", "23")
+        self._regleXML.setAttribute("tilewidth", "32")
+        self._regleXML.setAttribute("tileheight", "32")
+        self._regleXML.appendChild(self._tilesetXML)
+        self._regleXML.appendChild(self._tilesetRegionsXML)
+        tilesets = self._regleXML.getElementsByTagName("tileset")
+        for tileset in tilesets:
+            if tileset.getAttribute("name") == "Automapping Regions":
+                tileset.setAttribute("firstgid", "49")
+            else:
+                tileset.setAttribute("firstgid", "1")
+                self._nomTileset = tileset.getAttribute("name")
+    
+    def _defineTilesContents(self):
+        self._layerTiles, i = {"regions": dict(), "input_Tile Layer 1": dict()}, 0
+        self._layerTiles["regions"][0,8] = 0,1,1
+        self._layerTiles["regions"][1,8] = 0,1,1
+        self._layerTiles["regions"][2,8] = 0,1,1
+        self._layerTiles["regions"][3,8] = 0,1,1
+        self._layerTiles["regions"][4,8] = 0,1,0
+        self._layerTiles["regions"][5,8] = 0,1,0
+        self._layerTiles["regions"][6,8] = 0,1,0
+        self._layerTiles["regions"][7,8] = 0,1,0
+        self._layerTiles["regions"][0,9] = 1,1,1
+        self._layerTiles["regions"][1,9] = 1,1,1
+        self._layerTiles["regions"][2,9] = 1,1,1
+        self._layerTiles["regions"][3,9] = 1,1,1
+        self._layerTiles["regions"][4,9] = 1,1,1
+        self._layerTiles["regions"][5,9] = 1,1,1
+        self._layerTiles["regions"][6,9] = 1,1,1
+        self._layerTiles["regions"][7,9] = 1,1,1
+        self._layerTiles["regions"][0,10] = 0,1,1
+        self._layerTiles["regions"][1,10] = 0,1,1
+        self._layerTiles["regions"][2,10] = 0,1,1
+        self._layerTiles["regions"][3,10] = 0,1,1
+        self._layerTiles["regions"][4,10] = 1,1,1
+        self._layerTiles["regions"][5,10] = 1,1,1
+        self._layerTiles["regions"][6,10] = 1,1,1
+        self._layerTiles["regions"][7,10] = 1,1,1
+        self._layerTiles["regions"][0,12] = 1,1,0
+        self._layerTiles["regions"][1,12] = 1,1,0
+        self._layerTiles["regions"][2,12] = 1,1,0
+        self._layerTiles["regions"][3,12] = 1,1,0
+        self._layerTiles["regions"][4,12] = 1,1,1
+        self._layerTiles["regions"][5,12] = 1,1,1
+        self._layerTiles["regions"][6,12] = 1,1,1
+        self._layerTiles["regions"][7,12] = 1,1,1
+        self._layerTiles["regions"][0,13] = 1,1,1
+        self._layerTiles["regions"][1,13] = 1,1,1
+        self._layerTiles["regions"][2,13] = 1,1,1
+        self._layerTiles["regions"][3,13] = 1,1,1
+        self._layerTiles["regions"][4,13] = 1,1,1
+        self._layerTiles["regions"][5,13] = 1,1,1
+        self._layerTiles["regions"][6,13] = 1,1,1
+        self._layerTiles["regions"][7,13] = 1,1,1
+        self._layerTiles["regions"][0,14] = 1,1,0
+        self._layerTiles["regions"][1,14] = 1,1,0
+        self._layerTiles["regions"][2,14] = 1,1,0
+        self._layerTiles["regions"][3,14] = 1,1,0
+        self._layerTiles["regions"][4,14] = 0,1,0
+        self._layerTiles["regions"][5,14] = 0,1,0
+        self._layerTiles["regions"][6,14] = 0,1,0
+        self._layerTiles["regions"][7,14] = 0,1,0
+        self._layerTiles["regions"][0,16] = 0,1,0
+        self._layerTiles["regions"][1,16] = 0,1,0
+        self._layerTiles["regions"][2,16] = 0,1,0
+        self._layerTiles["regions"][3,16] = 0,1,0
+        self._layerTiles["regions"][4,16] = 0,1,0
+        self._layerTiles["regions"][5,16] = 0,1,0
+        self._layerTiles["regions"][6,16] = 1,1,0
+        self._layerTiles["regions"][7,16] = 1,1,0
+        self._layerTiles["regions"][0,17] = 1,1,1
+        self._layerTiles["regions"][1,17] = 1,1,1
+        self._layerTiles["regions"][2,17] = 1,1,1
+        self._layerTiles["regions"][3,17] = 1,1,1
+        self._layerTiles["regions"][4,17] = 1,1,1
+        self._layerTiles["regions"][5,17] = 1,1,1
+        self._layerTiles["regions"][6,17] = 1,1,1
+        self._layerTiles["regions"][7,17] = 1,1,1
+        self._layerTiles["regions"][0,18] = 0,1,0
+        self._layerTiles["regions"][1,18] = 0,1,0
+        self._layerTiles["regions"][2,18] = 0,1,1
+        self._layerTiles["regions"][3,18] = 0,1,1
+        self._layerTiles["regions"][4,18] = 1,1,0
+        self._layerTiles["regions"][5,18] = 1,1,0
+        self._layerTiles["regions"][6,18] = 0,1,0
+        self._layerTiles["regions"][7,18] = 0,1,0
+        self._layerTiles["regions"][0,20] = 0,1,1
+        self._layerTiles["regions"][1,20] = 0,1,1
+        self._layerTiles["regions"][2,20] = 0,1,0
+        self._layerTiles["regions"][3,20] = 0,1,0
+        self._layerTiles["regions"][4,20] = 0,1,0
+        self._layerTiles["regions"][5,20] = 0,1,0
+        self._layerTiles["regions"][6,20] = 0,1,0
+        self._layerTiles["regions"][7,20] = 0,1,0
+        self._layerTiles["regions"][0,21] = 1,1,1
+        self._layerTiles["regions"][1,21] = 1,1,1
+        self._layerTiles["regions"][2,21] = 1,1,1
+        self._layerTiles["regions"][3,21] = 1,1,1
+        self._layerTiles["regions"][4,21] = 1,1,1
+        self._layerTiles["regions"][5,21] = 1,1,1
+        self._layerTiles["regions"][6,21] = 1,1,1
+        self._layerTiles["regions"][7,21] = 1,1,1
+        self._layerTiles["regions"][0,22] = 0,1,0
+        self._layerTiles["regions"][1,22] = 0,1,0
+        self._layerTiles["regions"][2,22] = 0,1,0
+        self._layerTiles["regions"][3,22] = 0,1,0
+        self._layerTiles["regions"][4,22] = 0,1,0
+        self._layerTiles["regions"][5,22] = 0,1,0
+        self._layerTiles["regions"][6,22] = 0,1,0
+        self._layerTiles["regions"][7,22] = 0,1,0
+        self._layerTiles["input_Tile Layer 1"][0,0] = 1,1,1
+        self._layerTiles["input_Tile Layer 1"][1,0] = 0,1,1
+        self._layerTiles["input_Tile Layer 1"][2,0] = 1,1,0
+        self._layerTiles["input_Tile Layer 1"][3,0] = 0,1,0
+        self._layerTiles["input_Tile Layer 1"][4,0] = 1,1,1
+        self._layerTiles["input_Tile Layer 1"][5,0] = 0,1,1
+        self._layerTiles["input_Tile Layer 1"][6,0] = 1,1,0
+        self._layerTiles["input_Tile Layer 1"][7,0] = 0,1,0
+        self._layerTiles["input_Tile Layer 1"][0,1] = 1,1,1
+        self._layerTiles["input_Tile Layer 1"][1,1] = 1,1,1
+        self._layerTiles["input_Tile Layer 1"][2,1] = 1,1,1
+        self._layerTiles["input_Tile Layer 1"][3,1] = 1,1,1
+        self._layerTiles["input_Tile Layer 1"][4,1] = 1,1,1
+        self._layerTiles["input_Tile Layer 1"][5,1] = 1,1,1
+        self._layerTiles["input_Tile Layer 1"][6,1] = 1,1,1
+        self._layerTiles["input_Tile Layer 1"][7,1] = 1,1,1
+        self._layerTiles["input_Tile Layer 1"][0,2] = 1,1,1
+        self._layerTiles["input_Tile Layer 1"][1,2] = 1,1,1
+        self._layerTiles["input_Tile Layer 1"][2,2] = 1,1,1
+        self._layerTiles["input_Tile Layer 1"][3,2] = 1,1,1
+        self._layerTiles["input_Tile Layer 1"][4,2] = 1,1,0
+        self._layerTiles["input_Tile Layer 1"][5,2] = 1,1,0
+        self._layerTiles["input_Tile Layer 1"][6,2] = 1,1,0
+        self._layerTiles["input_Tile Layer 1"][7,2] = 1,1,0
+        self._layerTiles["input_Tile Layer 1"][0,4] = 1,1,1
+        self._layerTiles["input_Tile Layer 1"][1,4] = 0,1,1
+        self._layerTiles["input_Tile Layer 1"][2,4] = 1,1,0
+        self._layerTiles["input_Tile Layer 1"][3,4] = 0,1,0
+        self._layerTiles["input_Tile Layer 1"][4,4] = 1,1,1
+        self._layerTiles["input_Tile Layer 1"][5,4] = 0,1,1
+        self._layerTiles["input_Tile Layer 1"][6,4] = 1,1,0
+        self._layerTiles["input_Tile Layer 1"][7,4] = 0,1,0
+        self._layerTiles["input_Tile Layer 1"][0,5] = 1,1,1
+        self._layerTiles["input_Tile Layer 1"][1,5] = 1,1,1
+        self._layerTiles["input_Tile Layer 1"][2,5] = 1,1,1
+        self._layerTiles["input_Tile Layer 1"][3,5] = 1,1,1
+        self._layerTiles["input_Tile Layer 1"][4,5] = 1,1,1
+        self._layerTiles["input_Tile Layer 1"][5,5] = 1,1,1
+        self._layerTiles["input_Tile Layer 1"][6,5] = 1,1,1
+        self._layerTiles["input_Tile Layer 1"][7,5] = 1,1,1
+        self._layerTiles["input_Tile Layer 1"][0,6] = 0,1,1
+        self._layerTiles["input_Tile Layer 1"][1,6] = 0,1,1
+        self._layerTiles["input_Tile Layer 1"][2,6] = 0,1,1
+        self._layerTiles["input_Tile Layer 1"][3,6] = 0,1,1
+        self._layerTiles["input_Tile Layer 1"][4,6] = 0,1,0
+        self._layerTiles["input_Tile Layer 1"][5,6] = 0,1,0
+        self._layerTiles["input_Tile Layer 1"][6,6] = 0,1,0
+        self._layerTiles["input_Tile Layer 1"][7,6] = 0,1,0
+        self._layerTiles["input_Tile Layer 1"][0,8] = 0,1,1
+        self._layerTiles["input_Tile Layer 1"][1,8] = 0,1,0
+        self._layerTiles["input_Tile Layer 1"][2,8] = 0,1,1
+        self._layerTiles["input_Tile Layer 1"][3,8] = 0,1,0
+        self._layerTiles["input_Tile Layer 1"][4,8] = 0,0,0
+        self._layerTiles["input_Tile Layer 1"][5,8] = 0,0,0
+        self._layerTiles["input_Tile Layer 1"][6,8] = 0,0,0
+        self._layerTiles["input_Tile Layer 1"][7,8] = 0,0,0
+        self._layerTiles["input_Tile Layer 1"][0,9] = 0,1,1
+        self._layerTiles["input_Tile Layer 1"][1,9] = 0,1,1
+        self._layerTiles["input_Tile Layer 1"][2,9] = 0,1,1
+        self._layerTiles["input_Tile Layer 1"][3,9] = 0,1,1
+        self._layerTiles["input_Tile Layer 1"][4,9] = 1,1,1
+        self._layerTiles["input_Tile Layer 1"][5,9] = 1,1,1
+        self._layerTiles["input_Tile Layer 1"][6,9] = 1,1,1
+        self._layerTiles["input_Tile Layer 1"][7,9] = 1,1,1
+        self._layerTiles["input_Tile Layer 1"][0,10] = 0,1,1
+        self._layerTiles["input_Tile Layer 1"][1,10] = 0,1,1
+        self._layerTiles["input_Tile Layer 1"][2,10] = 0,1,0
+        self._layerTiles["input_Tile Layer 1"][3,10] = 0,1,0
+        self._layerTiles["input_Tile Layer 1"][4,10] = 1,1,1
+        self._layerTiles["input_Tile Layer 1"][5,10] = 1,1,0
+        self._layerTiles["input_Tile Layer 1"][6,10] = 0,1,1
+        self._layerTiles["input_Tile Layer 1"][7,10] = 0,1,0
+        self._layerTiles["input_Tile Layer 1"][0,12] = 1,1,0
+        self._layerTiles["input_Tile Layer 1"][1,12] = 1,1,0
+        self._layerTiles["input_Tile Layer 1"][2,12] = 0,1,0
+        self._layerTiles["input_Tile Layer 1"][3,12] = 0,1,0
+        self._layerTiles["input_Tile Layer 1"][4,12] = 1,1,1
+        self._layerTiles["input_Tile Layer 1"][5,12] = 0,1,1
+        self._layerTiles["input_Tile Layer 1"][6,12] = 1,1,0
+        self._layerTiles["input_Tile Layer 1"][7,12] = 0,1,0
+        self._layerTiles["input_Tile Layer 1"][0,13] = 1,1,0
+        self._layerTiles["input_Tile Layer 1"][1,13] = 1,1,0
+        self._layerTiles["input_Tile Layer 1"][2,13] = 1,1,0
+        self._layerTiles["input_Tile Layer 1"][3,13] = 1,1,0
+        self._layerTiles["input_Tile Layer 1"][4,13] = 1,1,1
+        self._layerTiles["input_Tile Layer 1"][5,13] = 1,1,1
+        self._layerTiles["input_Tile Layer 1"][6,13] = 1,1,1
+        self._layerTiles["input_Tile Layer 1"][7,13] = 1,1,1
+        self._layerTiles["input_Tile Layer 1"][0,14] = 1,1,0
+        self._layerTiles["input_Tile Layer 1"][1,14] = 0,1,0
+        self._layerTiles["input_Tile Layer 1"][2,14] = 1,1,0
+        self._layerTiles["input_Tile Layer 1"][3,14] = 0,1,0
+        self._layerTiles["input_Tile Layer 1"][4,14] = 0,0,0
+        self._layerTiles["input_Tile Layer 1"][5,14] = 0,0,0
+        self._layerTiles["input_Tile Layer 1"][6,14] = 0,0,0
+        self._layerTiles["input_Tile Layer 1"][7,14] = 0,0,0
+        self._layerTiles["input_Tile Layer 1"][0,16] = 0,1,0
+        self._layerTiles["input_Tile Layer 1"][1,16] = 0,0,0
+        self._layerTiles["input_Tile Layer 1"][2,16] = 0,0,0
+        self._layerTiles["input_Tile Layer 1"][3,16] = 0,0,0
+        self._layerTiles["input_Tile Layer 1"][4,16] = 0,0,0
+        self._layerTiles["input_Tile Layer 1"][5,16] = 0,0,0
+        self._layerTiles["input_Tile Layer 1"][6,16] = 1,1,0
+        self._layerTiles["input_Tile Layer 1"][7,16] = 0,1,0
+        self._layerTiles["input_Tile Layer 1"][0,17] = 0,1,0
+        self._layerTiles["input_Tile Layer 1"][1,17] = 1,1,1
+        self._layerTiles["input_Tile Layer 1"][2,17] = 0,1,1
+        self._layerTiles["input_Tile Layer 1"][3,17] = 0,1,1
+        self._layerTiles["input_Tile Layer 1"][4,17] = 1,1,0
+        self._layerTiles["input_Tile Layer 1"][5,17] = 1,1,0
+        self._layerTiles["input_Tile Layer 1"][6,17] = 1,1,0
+        self._layerTiles["input_Tile Layer 1"][7,17] = 1,1,0
+        self._layerTiles["input_Tile Layer 1"][0,18] = 0,1,0
+        self._layerTiles["input_Tile Layer 1"][1,18] = 0,0,0
+        self._layerTiles["input_Tile Layer 1"][2,18] = 0,1,1
+        self._layerTiles["input_Tile Layer 1"][3,18] = 0,1,0
+        self._layerTiles["input_Tile Layer 1"][4,18] = 1,1,0
+        self._layerTiles["input_Tile Layer 1"][5,18] = 0,1,0
+        self._layerTiles["input_Tile Layer 1"][6,18] = 0,0,0
+        self._layerTiles["input_Tile Layer 1"][7,18] = 0,0,0
+        self._layerTiles["input_Tile Layer 1"][0,20] = 0,1,1
+        self._layerTiles["input_Tile Layer 1"][1,20] = 0,1,0
+        self._layerTiles["input_Tile Layer 1"][2,20] = 0,0,0
+        self._layerTiles["input_Tile Layer 1"][3,20] = 0,0,0
+        self._layerTiles["input_Tile Layer 1"][4,20] = 0,1,0
+        self._layerTiles["input_Tile Layer 1"][5,20] = 0,0,0
+        self._layerTiles["input_Tile Layer 1"][6,20] = 0,0,0
+        self._layerTiles["input_Tile Layer 1"][7,20] = 0,0,0
+        self._layerTiles["input_Tile Layer 1"][0,21] = 0,1,1
+        self._layerTiles["input_Tile Layer 1"][1,21] = 0,1,1
+        self._layerTiles["input_Tile Layer 1"][2,21] = 0,1,0
+        self._layerTiles["input_Tile Layer 1"][3,21] = 0,1,1
+        self._layerTiles["input_Tile Layer 1"][4,21] = 0,1,0
+        self._layerTiles["input_Tile Layer 1"][5,21] = 1,1,0
+        self._layerTiles["input_Tile Layer 1"][6,21] = 0,1,0
+        self._layerTiles["input_Tile Layer 1"][7,21] = 0,1,0
+        self._layerTiles["input_Tile Layer 1"][0,22] = 0,0,0
+        self._layerTiles["input_Tile Layer 1"][1,22] = 0,0,0
+        self._layerTiles["input_Tile Layer 1"][2,22] = 0,1,0
+        self._layerTiles["input_Tile Layer 1"][3,22] = 0,0,0
+        self._layerTiles["input_Tile Layer 1"][4,22] = 0,0,0
+        self._layerTiles["input_Tile Layer 1"][5,22] = 0,0,0
+        self._layerTiles["input_Tile Layer 1"][6,22] = 0,0,0
+        self._layerTiles["input_Tile Layer 1"][7,22] = 0,0,0
+
+    def makeRule(self, inputFilename, outputFilename):
+        pass
+
     def launchScript(self, inputFilename, outputFilename, askConfirmation, verbose, testSteps=["Input exists", "Input validity", "Output without extension", "Output already exists"]):
         super().launchScript(inputFilename, outputFilename, askConfirmation, verbose, testSteps=testSteps)
-        xmlData = self.makeXML(inputFilename, outputFilename=outputFilename)
+        self._defineTilesContents()
+        xmlData = self.makeRule(inputFilename, outputFilename)
         with open(self._outputFilename, "w") as outputFile:
             xmlData.writexml(outputFile, addindent="  ", newl="\n", encoding="UTF-8")
         xmlData.unlink()
@@ -266,6 +539,8 @@ if __name__ == "__main__":
     makeTilesetSubCommand.add_argument("-v", "--verbose", action="store_true", help="Starts the program in verbose mode: it prints detailed information on the process.")
     makeTilesetSubCommand.add_argument("-f", "--force", action="store_false", dest="askConfirmation", help="Forces the script to be executed without asking you anything. The script will overwrite the output file without warning you if it already exists. Furthermore, it won't ask add an extension to the output file if it lacks.")
     makeRuleSubCommand = subparsers.add_parser("makerule", help="Rule Maker. Generates an automapping rule for Tiled map editor using a tileset of an expanded autotile. It enables you to map autotiles automatically, without worrying about the precise case to use.")
+    makeTilesetSubCommand.add_argument("-o", "--output", metavar="outputRule", dest="outputRule", default="automappingRule.tmx", help="The output file (the automapping rule). By default, it is \"automappingrule.tmx\", located in the directory in which you launch the script. The script will ask you whether it should overwrite the file if it already exists, unless you used the force option.")
+    makeTilesetSubCommand.add_argument("inputTileset", help="The tileset for Tiled to make an automapping rule with. It must be a tsx file referring to an expanded autotile. To get the expanded autotile, use the autotile expander featured with Remex (with the command \"expand\"). To get the tileset, use the tileset maker featured with Remex (with the command \"maketileset\").")
     makeRuleSubCommand.add_argument("-v", "--verbose", action="store_true", help="Starts the program in verbose mode: it prints detailed information on the process.")
     makeRuleSubCommand.add_argument("-f", "--force", action="store_false", dest="askConfirmation", help="Forces the script to be executed without asking you anything. The script will overwrite the output file without warning you if it already exists. Furthermore, it won't ask add an extension to the output file if it lacks.")
     answers = vars(parser.parse_args())
@@ -277,3 +552,6 @@ if __name__ == "__main__":
     elif command == "maketileset":
         tilesetGenerator, outputTileset, inputExpandedAutotile = TilesetGenerator("expanded autotile", ".tsx"), answers["outputTileset"], answers["inputExpandedAutotile"]
         tilesetGenerator.launchScript(inputExpandedAutotile, outputTileset, askConfirmation, verbose)
+    elif command == "makerule":
+        ruleMaker, outputRule, inputTileset = RuleMaker("automapping rule", ".tmx"), answers["outputRule"], answers["inputTileset"]
+        ruleMaker.launchScript(inputTileset, outputRule, askConfirmation, verbose)
