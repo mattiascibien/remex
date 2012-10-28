@@ -2,7 +2,7 @@ from argparse import ArgumentParser
 from main import *
 from PIL import ImageTk
 from PIL import Image as ImagePIL
-from tkinter import Tk, W, S, ttk, filedialog, messagebox, Text, INSERT, VERTICAL, HORIZONTAL
+from tkinter import Tk, W, S, E, ttk, filedialog, messagebox, Text, INSERT, VERTICAL, HORIZONTAL
 from os import path
 
 class GUI:
@@ -180,9 +180,10 @@ class TilesetGeneratorGUI(ScriptGUI):
         self._expandedAutotileWidget = Text(self._frame, wrap="none")
         self._expandedAutotileWidget.insert(INSERT, self._tileset.toprettyxml(indent="  ", newl="\n", encoding="UTF-8") )
         self._expandedAutotileScrollbarX = ttk.Scrollbar(self._frame, orient=HORIZONTAL, command=self._expandedAutotileWidget.xview)
-        self._expandedAutotileWidget.grid(column=0, row=0)
-        self._expandedAutotileScrollbarX.grid(column=0, row=1)
+        #self._expandedAutotileScrollbarX.config(width=32)
         self._expandedAutotileWidget["xscrollcommand"] = self._expandedAutotileScrollbarX.set
+        self._expandedAutotileWidget.grid(column=0, row=0)
+        self._expandedAutotileScrollbarX.grid(column=0, row=1, sticky=(W,E))
 
     def _saveData(self):
         with open(self._saveFilename, "w") as outputFile:

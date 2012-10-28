@@ -244,7 +244,13 @@ class TilesetGenerator(Script):
         xmlData.unlink()
 
 class RuleMaker(Script):
-    pass
+
+    def launchScript(self, inputFilename, outputFilename, askConfirmation, verbose, testSteps=["Input exists", "Input validity", "Output without extension", "Output already exists"]):
+        super().launchScript(inputFilename, outputFilename, askConfirmation, verbose, testSteps=testSteps)
+        xmlData = self.makeXML(inputFilename, outputFilename=outputFilename)
+        with open(self._outputFilename, "w") as outputFile:
+            xmlData.writexml(outputFile, addindent="  ", newl="\n", encoding="UTF-8")
+        xmlData.unlink()
 
 if __name__ == "__main__":
     parser = ArgumentParser()
