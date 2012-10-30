@@ -2,6 +2,8 @@ import xml.dom.minidom
 from PIL import Image as ImagePIL
 from PIL import ImageTk
 from os import path
+from os import dirname
+from sys import argv
 from argparse import ArgumentParser
 from interacter import *
 
@@ -251,25 +253,29 @@ class RuleMaker(Script):
     def _loadTileset(self):
         self._tilesetConfig = xml.dom.minidom.parse(self._inputFilename)
         self._tilesetXML = self._configTileset.documentElement
-        #self._tilesetRegionsConfig = xml.dom.minidom.parse("../Ressources/" + "AutomappingRegions.tsx")
+        self._tilesetXML.setAttribute("firstgid", "1")
+        self._tilesetRegionsConfig = xml.dom.minidom.getDOMImplementation().createDocument(None, "tileset", None)
         self._tilesetRegionsXML = self._configTilesetRegions.documentElement
-        self._configRegle = xml.dom.getDOMImplementation().createDocument(None, "map", None)
-        self._regleXML = self._configRegle.documentElement
-        self._regleXML.setAttribute("version", "1.0")
-        self._regleXML.setAttribute("orientation", "orthogonal")
-        self._regleXML.setAttribute("width", "31")
-        self._regleXML.setAttribute("height", "23")
-        self._regleXML.setAttribute("tilewidth", "32")
-        self._regleXML.setAttribute("tileheight", "32")
-        self._regleXML.appendChild(self._tilesetXML)
-        self._regleXML.appendChild(self._tilesetRegionsXML)
-        tilesets = self._regleXML.getElementsByTagName("tileset")
-        for tileset in tilesets:
-            if tileset.getAttribute("name") == "Automapping Regions":
-                tileset.setAttribute("firstgid", "49")
-            else:
-                tileset.setAttribute("firstgid", "1")
-                self._nomTileset = tileset.getAttribute("name")
+        self._tilesetRegionsXML.setAttribute("name", "Automapping Regions")
+        self._tilesetRegionsXML.setAttribute("tilewidth", "32")
+        self._tilesetRegionsXML.setAttribute("tileheight", "32")
+        self._tilesetRegionsXML.setAttribute("firstgid", "49")
+        imageTilesetRegionsXML = self._tilesetRegionsXML.createElement("image")
+        imageTilesetRegionsXML.setAttribute("width","32")
+        imageTilesetRegionsXML.setAttribute("height","32")
+        imageTilesetRegionsXML.setAttribute("trans","ffffff")
+        imageTilesetRegionsXML.setAttribute("source", self._automappingRegionsBaseImagePath)
+        self._tilesetRegionsXML.appendChild(imageTilesetRegionsXML)
+        self._ruleConfig = xml.dom.getDOMImplementation().createDocument(None, "map", None)
+        self._ruleXML = self._ruleConfig.documentElement
+        self._ruleXML.setAttribute("version", "1.0")
+        self._ruleXML.setAttribute("orientation", "orthogonal")
+        self._ruleXML.setAttribute("width", "31")
+        self._ruleXML.setAttribute("height", "23")
+        self._ruleXML.setAttribute("tilewidth", "32")
+        self._ruleXML.setAttribute("tileheight", "32")
+        self._ruleXML.appendChild(self._tilesetXML)
+        self._ruleXML.appendChild(self._tilesetRegionsXML)
     
     def _defineTilesContents(self):
         self._layerTiles, i = {"regions": dict(), "input_Tile Layer 1": dict()}, 0
@@ -519,6 +525,7 @@ class RuleMaker(Script):
 
     def launchScript(self, inputFilename, outputFilename, askConfirmation, verbose, testSteps=["Input exists", "Input validity", "Output without extension", "Output already exists"]):
         super().launchScript(inputFilename, outputFilename, askConfirmation, verbose, testSteps=testSteps)
+        self._automappingRegionsBaseImagePath = path.abspath(dirname(argv[0])) + "AutomappingRegions.png"
         self._defineTilesContents()
         xmlData = self.makeRule(inputFilename, outputFilename)
         with open(self._outputFilename, "w") as outputFile:
