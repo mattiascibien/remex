@@ -237,11 +237,13 @@ class TilesetGenerator(Script):
         tilesetXML.appendChild(imageXML)
         return mainXML
 
-    def launchScript(self, inputFilename, outputFilename, noAbsolutePath, askConfirmation, verbose, testSteps=["Input exists", "Input validity", "Input size", "Output without extension", "Output already exists"]):
+    def launchScript(self, inputFilename, outputFilename, relativePath, askConfirmation, verbose, testSteps=["Input exists", "Input validity", "Input size", "Output without extension", "Output already exists"]):
         super().launchScript(inputFilename, outputFilename, askConfirmation, verbose, testSteps=testSteps)
-        if noAbsolutePath is False:
+        if relativePath is True:
+            self._inputFilename = path.relpath(path.abspath(self._inputFilename), path.dirname(path.abspath(self._outputFilename))).replace("\\", "/")
+            print(path.abspath(self._inputFilename), "C:/Users/Kevin/Documents/RPG Maker to Tiled Suite/trunk/")
+        else:
             self._inputFilename = path.abspath(self._inputFilename).replace("\\", "/")
-            print("don", self._inputFilename)
         xmlData = self.makeXML(self._inputFilename, outputFilename=outputFilename)
         with open(self._outputFilename, "w") as outputFile:
             xmlData.writexml(outputFile, addindent="  ", newl="\n", encoding="UTF-8")
@@ -625,7 +627,7 @@ if __name__ == "__main__":
     makeTilesetSubCommand.add_argument("-o", "--output", metavar="outputTileset", dest="outputTileset", default="expandedAutotileTileset.tsx", help="The output file (the tileset). By default, it is \"expandedAutotileTileset.tsx\", located in the directory in which you launch the script. The script will ask you whether it should overwrite the file if it already exists, unless you used the force option.")
     makeTilesetSubCommand.add_argument("inputExpandedAutotile", help="The expanded autotile to make a tileset with. It must be a PNG image, 256 * 192 wide. To get this expanded autotile, use the autotile expander featured with Remex (with the command \"expand\").")
     makeTilesetSubCommand.add_argument("-f", "--force", action="store_false", dest="askConfirmation", help="Forces the script to be executed without asking you anything. The script will overwrite the output file without warning you if it already exists. Furthermore, it won't ask add an extension to the output file if it lacks.")
-    makeTilesetSubCommand.add_argument("-a", "--noabsolute", action="store_true", dest="noAbsolutePath", help="Prevents the tileset generator to write an absolute path to the image in the tileset.")
+    makeTilesetSubCommand.add_argument("-r", "--relative", action="store_true", dest="relativePath", help="In the tileset file, use a relative path to the image itself. To avoid any problem regarding paths, you should put your tilesets, maps and images in the same folder.")
     makeTilesetSubCommand.add_argument("-v", "--verbose", action="store_true", help="Starts the program in verbose mode: it prints detailed information on the process.")
     makeRuleSubCommand = subparsers.add_parser("makerule", help="Rule Maker. Generates an automapping rule for Tiled map editor using a tileset of an expanded autotile. It enables you to map autotiles automatically, without worrying about the precise case to use.")
     makeRuleSubCommand.add_argument("-o", "--output", metavar="outputRule", dest="outputRule", default="automappingRule.tmx", help="The output file (the automapping rule). By default, it is \"automappingrule.tmx\", located in the directory in which you launch the script. The script will ask you whether it should overwrite the file if it already exists, unless you used the force option.")
@@ -641,8 +643,8 @@ if __name__ == "__main__":
         autotileExpander.launchScript(inputAutotile, outputAutotile, askConfirmation, verbose)
     elif command == "maketileset":
         tilesetGenerator, outputTileset, inputExpandedAutotile = TilesetGenerator("expanded autotile", ".tsx"), answers["outputTileset"], answers["inputExpandedAutotile"]
-        noAbsolutePath = answers["noAbsolutePath"]
-        tilesetGenerator.launchScript(inputExpandedAutotile, outputTileset, noAbsolutePath, askConfirmation, verbose)
+        relativePath = answers["relativePath"]
+        tilesetGenerator.launchScript(inputExpandedAutotile, outputTileset, relativePath, askConfirmation, verbose)
     elif command == "makerule":
         ruleMaker, outputRule, inputTileset, mapLayer = RuleMaker("automapping rule", ".tmx"), answers["outputRule"], answers["inputTileset"], answers["mapLayer"]
         ruleMaker.launchScript(inputTileset, outputRule, mapLayer, askConfirmation, verbose)
