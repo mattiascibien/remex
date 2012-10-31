@@ -277,7 +277,7 @@ class RuleMaker(Script):
         self._ruleXML.appendChild(self._tilesetRegionsXML)
     
     def _defineTilesContents(self):
-        self._layerTiles, i = {"regions": dict(), "input": dict()}, 0
+        self._layerTiles, i = {"regions": dict(), "input_" + self._mapLayer: dict()}, 0
         self._layerTiles["regions"][0,8] = 0,1,1
         self._layerTiles["regions"][1,8] = 0,1,1
         self._layerTiles["regions"][2,8] = 0,1,1
@@ -374,150 +374,150 @@ class RuleMaker(Script):
         self._layerTiles["regions"][5,22] = 0,1,0
         self._layerTiles["regions"][6,22] = 0,1,0
         self._layerTiles["regions"][7,22] = 0,1,0
-        self._layerTiles["input"][0,0] = 1,1,1
-        self._layerTiles["input"][1,0] = 0,1,1
-        self._layerTiles["input"][2,0] = 1,1,0
-        self._layerTiles["input"][3,0] = 0,1,0
-        self._layerTiles["input"][4,0] = 1,1,1
-        self._layerTiles["input"][5,0] = 0,1,1
-        self._layerTiles["input"][6,0] = 1,1,0
-        self._layerTiles["input"][7,0] = 0,1,0
-        self._layerTiles["input"][0,1] = 1,1,1
-        self._layerTiles["input"][1,1] = 1,1,1
-        self._layerTiles["input"][2,1] = 1,1,1
-        self._layerTiles["input"][3,1] = 1,1,1
-        self._layerTiles["input"][4,1] = 1,1,1
-        self._layerTiles["input"][5,1] = 1,1,1
-        self._layerTiles["input"][6,1] = 1,1,1
-        self._layerTiles["input"][7,1] = 1,1,1
-        self._layerTiles["input"][0,2] = 1,1,1
-        self._layerTiles["input"][1,2] = 1,1,1
-        self._layerTiles["input"][2,2] = 1,1,1
-        self._layerTiles["input"][3,2] = 1,1,1
-        self._layerTiles["input"][4,2] = 1,1,0
-        self._layerTiles["input"][5,2] = 1,1,0
-        self._layerTiles["input"][6,2] = 1,1,0
-        self._layerTiles["input"][7,2] = 1,1,0
-        self._layerTiles["input"][0,4] = 1,1,1
-        self._layerTiles["input"][1,4] = 0,1,1
-        self._layerTiles["input"][2,4] = 1,1,0
-        self._layerTiles["input"][3,4] = 0,1,0
-        self._layerTiles["input"][4,4] = 1,1,1
-        self._layerTiles["input"][5,4] = 0,1,1
-        self._layerTiles["input"][6,4] = 1,1,0
-        self._layerTiles["input"][7,4] = 0,1,0
-        self._layerTiles["input"][0,5] = 1,1,1
-        self._layerTiles["input"][1,5] = 1,1,1
-        self._layerTiles["input"][2,5] = 1,1,1
-        self._layerTiles["input"][3,5] = 1,1,1
-        self._layerTiles["input"][4,5] = 1,1,1
-        self._layerTiles["input"][5,5] = 1,1,1
-        self._layerTiles["input"][6,5] = 1,1,1
-        self._layerTiles["input"][7,5] = 1,1,1
-        self._layerTiles["input"][0,6] = 0,1,1
-        self._layerTiles["input"][1,6] = 0,1,1
-        self._layerTiles["input"][2,6] = 0,1,1
-        self._layerTiles["input"][3,6] = 0,1,1
-        self._layerTiles["input"][4,6] = 0,1,0
-        self._layerTiles["input"][5,6] = 0,1,0
-        self._layerTiles["input"][6,6] = 0,1,0
-        self._layerTiles["input"][7,6] = 0,1,0
-        self._layerTiles["input"][0,8] = 0,1,1
-        self._layerTiles["input"][1,8] = 0,1,0
-        self._layerTiles["input"][2,8] = 0,1,1
-        self._layerTiles["input"][3,8] = 0,1,0
-        self._layerTiles["input"][4,8] = 0,0,0
-        self._layerTiles["input"][5,8] = 0,0,0
-        self._layerTiles["input"][6,8] = 0,0,0
-        self._layerTiles["input"][7,8] = 0,0,0
-        self._layerTiles["input"][0,9] = 0,1,1
-        self._layerTiles["input"][1,9] = 0,1,1
-        self._layerTiles["input"][2,9] = 0,1,1
-        self._layerTiles["input"][3,9] = 0,1,1
-        self._layerTiles["input"][4,9] = 1,1,1
-        self._layerTiles["input"][5,9] = 1,1,1
-        self._layerTiles["input"][6,9] = 1,1,1
-        self._layerTiles["input"][7,9] = 1,1,1
-        self._layerTiles["input"][0,10] = 0,1,1
-        self._layerTiles["input"][1,10] = 0,1,1
-        self._layerTiles["input"][2,10] = 0,1,0
-        self._layerTiles["input"][3,10] = 0,1,0
-        self._layerTiles["input"][4,10] = 1,1,1
-        self._layerTiles["input"][5,10] = 1,1,0
-        self._layerTiles["input"][6,10] = 0,1,1
-        self._layerTiles["input"][7,10] = 0,1,0
-        self._layerTiles["input"][0,12] = 1,1,0
-        self._layerTiles["input"][1,12] = 1,1,0
-        self._layerTiles["input"][2,12] = 0,1,0
-        self._layerTiles["input"][3,12] = 0,1,0
-        self._layerTiles["input"][4,12] = 1,1,1
-        self._layerTiles["input"][5,12] = 0,1,1
-        self._layerTiles["input"][6,12] = 1,1,0
-        self._layerTiles["input"][7,12] = 0,1,0
-        self._layerTiles["input"][0,13] = 1,1,0
-        self._layerTiles["input"][1,13] = 1,1,0
-        self._layerTiles["input"][2,13] = 1,1,0
-        self._layerTiles["input"][3,13] = 1,1,0
-        self._layerTiles["input"][4,13] = 1,1,1
-        self._layerTiles["input"][5,13] = 1,1,1
-        self._layerTiles["input"][6,13] = 1,1,1
-        self._layerTiles["input"][7,13] = 1,1,1
-        self._layerTiles["input"][0,14] = 1,1,0
-        self._layerTiles["input"][1,14] = 0,1,0
-        self._layerTiles["input"][2,14] = 1,1,0
-        self._layerTiles["input"][3,14] = 0,1,0
-        self._layerTiles["input"][4,14] = 0,0,0
-        self._layerTiles["input"][5,14] = 0,0,0
-        self._layerTiles["input"][6,14] = 0,0,0
-        self._layerTiles["input"][7,14] = 0,0,0
-        self._layerTiles["input"][0,16] = 0,1,0
-        self._layerTiles["input"][1,16] = 0,0,0
-        self._layerTiles["input"][2,16] = 0,0,0
-        self._layerTiles["input"][3,16] = 0,0,0
-        self._layerTiles["input"][4,16] = 0,0,0
-        self._layerTiles["input"][5,16] = 0,0,0
-        self._layerTiles["input"][6,16] = 1,1,0
-        self._layerTiles["input"][7,16] = 0,1,0
-        self._layerTiles["input"][0,17] = 0,1,0
-        self._layerTiles["input"][1,17] = 1,1,1
-        self._layerTiles["input"][2,17] = 0,1,1
-        self._layerTiles["input"][3,17] = 0,1,1
-        self._layerTiles["input"][4,17] = 1,1,0
-        self._layerTiles["input"][5,17] = 1,1,0
-        self._layerTiles["input"][6,17] = 1,1,0
-        self._layerTiles["input"][7,17] = 1,1,0
-        self._layerTiles["input"][0,18] = 0,1,0
-        self._layerTiles["input"][1,18] = 0,0,0
-        self._layerTiles["input"][2,18] = 0,1,1
-        self._layerTiles["input"][3,18] = 0,1,0
-        self._layerTiles["input"][4,18] = 1,1,0
-        self._layerTiles["input"][5,18] = 0,1,0
-        self._layerTiles["input"][6,18] = 0,0,0
-        self._layerTiles["input"][7,18] = 0,0,0
-        self._layerTiles["input"][0,20] = 0,1,1
-        self._layerTiles["input"][1,20] = 0,1,0
-        self._layerTiles["input"][2,20] = 0,0,0
-        self._layerTiles["input"][3,20] = 0,0,0
-        self._layerTiles["input"][4,20] = 0,1,0
-        self._layerTiles["input"][5,20] = 0,0,0
-        self._layerTiles["input"][6,20] = 0,0,0
-        self._layerTiles["input"][7,20] = 0,0,0
-        self._layerTiles["input"][0,21] = 0,1,1
-        self._layerTiles["input"][1,21] = 0,1,1
-        self._layerTiles["input"][2,21] = 0,1,0
-        self._layerTiles["input"][3,21] = 0,1,1
-        self._layerTiles["input"][4,21] = 0,1,0
-        self._layerTiles["input"][5,21] = 1,1,0
-        self._layerTiles["input"][6,21] = 0,1,0
-        self._layerTiles["input"][7,21] = 0,1,0
-        self._layerTiles["input"][0,22] = 0,0,0
-        self._layerTiles["input"][1,22] = 0,0,0
-        self._layerTiles["input"][2,22] = 0,1,0
-        self._layerTiles["input"][3,22] = 0,0,0
-        self._layerTiles["input"][4,22] = 0,0,0
-        self._layerTiles["input"][5,22] = 0,0,0
-        self._layerTiles["input"][6,22] = 0,0,0
-        self._layerTiles["input"][7,22] = 0,0,0
+        self._layerTiles["input_" + self._mapLayer][0,0] = 1,1,1
+        self._layerTiles["input_" + self._mapLayer][1,0] = 0,1,1
+        self._layerTiles["input_" + self._mapLayer][2,0] = 1,1,0
+        self._layerTiles["input_" + self._mapLayer][3,0] = 0,1,0
+        self._layerTiles["input_" + self._mapLayer][4,0] = 1,1,1
+        self._layerTiles["input_" + self._mapLayer][5,0] = 0,1,1
+        self._layerTiles["input_" + self._mapLayer][6,0] = 1,1,0
+        self._layerTiles["input_" + self._mapLayer][7,0] = 0,1,0
+        self._layerTiles["input_" + self._mapLayer][0,1] = 1,1,1
+        self._layerTiles["input_" + self._mapLayer][1,1] = 1,1,1
+        self._layerTiles["input_" + self._mapLayer][2,1] = 1,1,1
+        self._layerTiles["input_" + self._mapLayer][3,1] = 1,1,1
+        self._layerTiles["input_" + self._mapLayer][4,1] = 1,1,1
+        self._layerTiles["input_" + self._mapLayer][5,1] = 1,1,1
+        self._layerTiles["input_" + self._mapLayer][6,1] = 1,1,1
+        self._layerTiles["input_" + self._mapLayer][7,1] = 1,1,1
+        self._layerTiles["input_" + self._mapLayer][0,2] = 1,1,1
+        self._layerTiles["input_" + self._mapLayer][1,2] = 1,1,1
+        self._layerTiles["input_" + self._mapLayer][2,2] = 1,1,1
+        self._layerTiles["input_" + self._mapLayer][3,2] = 1,1,1
+        self._layerTiles["input_" + self._mapLayer][4,2] = 1,1,0
+        self._layerTiles["input_" + self._mapLayer][5,2] = 1,1,0
+        self._layerTiles["input_" + self._mapLayer][6,2] = 1,1,0
+        self._layerTiles["input_" + self._mapLayer][7,2] = 1,1,0
+        self._layerTiles["input_" + self._mapLayer][0,4] = 1,1,1
+        self._layerTiles["input_" + self._mapLayer][1,4] = 0,1,1
+        self._layerTiles["input_" + self._mapLayer][2,4] = 1,1,0
+        self._layerTiles["input_" + self._mapLayer][3,4] = 0,1,0
+        self._layerTiles["input_" + self._mapLayer][4,4] = 1,1,1
+        self._layerTiles["input_" + self._mapLayer][5,4] = 0,1,1
+        self._layerTiles["input_" + self._mapLayer][6,4] = 1,1,0
+        self._layerTiles["input_" + self._mapLayer][7,4] = 0,1,0
+        self._layerTiles["input_" + self._mapLayer][0,5] = 1,1,1
+        self._layerTiles["input_" + self._mapLayer][1,5] = 1,1,1
+        self._layerTiles["input_" + self._mapLayer][2,5] = 1,1,1
+        self._layerTiles["input_" + self._mapLayer][3,5] = 1,1,1
+        self._layerTiles["input_" + self._mapLayer][4,5] = 1,1,1
+        self._layerTiles["input_" + self._mapLayer][5,5] = 1,1,1
+        self._layerTiles["input_" + self._mapLayer][6,5] = 1,1,1
+        self._layerTiles["input_" + self._mapLayer][7,5] = 1,1,1
+        self._layerTiles["input_" + self._mapLayer][0,6] = 0,1,1
+        self._layerTiles["input_" + self._mapLayer][1,6] = 0,1,1
+        self._layerTiles["input_" + self._mapLayer][2,6] = 0,1,1
+        self._layerTiles["input_" + self._mapLayer][3,6] = 0,1,1
+        self._layerTiles["input_" + self._mapLayer][4,6] = 0,1,0
+        self._layerTiles["input_" + self._mapLayer][5,6] = 0,1,0
+        self._layerTiles["input_" + self._mapLayer][6,6] = 0,1,0
+        self._layerTiles["input_" + self._mapLayer][7,6] = 0,1,0
+        self._layerTiles["input_" + self._mapLayer][0,8] = 0,1,1
+        self._layerTiles["input_" + self._mapLayer][1,8] = 0,1,0
+        self._layerTiles["input_" + self._mapLayer][2,8] = 0,1,1
+        self._layerTiles["input_" + self._mapLayer][3,8] = 0,1,0
+        self._layerTiles["input_" + self._mapLayer][4,8] = 0,0,0
+        self._layerTiles["input_" + self._mapLayer][5,8] = 0,0,0
+        self._layerTiles["input_" + self._mapLayer][6,8] = 0,0,0
+        self._layerTiles["input_" + self._mapLayer][7,8] = 0,0,0
+        self._layerTiles["input_" + self._mapLayer][0,9] = 0,1,1
+        self._layerTiles["input_" + self._mapLayer][1,9] = 0,1,1
+        self._layerTiles["input_" + self._mapLayer][2,9] = 0,1,1
+        self._layerTiles["input_" + self._mapLayer][3,9] = 0,1,1
+        self._layerTiles["input_" + self._mapLayer][4,9] = 1,1,1
+        self._layerTiles["input_" + self._mapLayer][5,9] = 1,1,1
+        self._layerTiles["input_" + self._mapLayer][6,9] = 1,1,1
+        self._layerTiles["input_" + self._mapLayer][7,9] = 1,1,1
+        self._layerTiles["input_" + self._mapLayer][0,10] = 0,1,1
+        self._layerTiles["input_" + self._mapLayer][1,10] = 0,1,1
+        self._layerTiles["input_" + self._mapLayer][2,10] = 0,1,0
+        self._layerTiles["input_" + self._mapLayer][3,10] = 0,1,0
+        self._layerTiles["input_" + self._mapLayer][4,10] = 1,1,1
+        self._layerTiles["input_" + self._mapLayer][5,10] = 1,1,0
+        self._layerTiles["input_" + self._mapLayer][6,10] = 0,1,1
+        self._layerTiles["input_" + self._mapLayer][7,10] = 0,1,0
+        self._layerTiles["input_" + self._mapLayer][0,12] = 1,1,0
+        self._layerTiles["input_" + self._mapLayer][1,12] = 1,1,0
+        self._layerTiles["input_" + self._mapLayer][2,12] = 0,1,0
+        self._layerTiles["input_" + self._mapLayer][3,12] = 0,1,0
+        self._layerTiles["input_" + self._mapLayer][4,12] = 1,1,1
+        self._layerTiles["input_" + self._mapLayer][5,12] = 0,1,1
+        self._layerTiles["input_" + self._mapLayer][6,12] = 1,1,0
+        self._layerTiles["input_" + self._mapLayer][7,12] = 0,1,0
+        self._layerTiles["input_" + self._mapLayer][0,13] = 1,1,0
+        self._layerTiles["input_" + self._mapLayer][1,13] = 1,1,0
+        self._layerTiles["input_" + self._mapLayer][2,13] = 1,1,0
+        self._layerTiles["input_" + self._mapLayer][3,13] = 1,1,0
+        self._layerTiles["input_" + self._mapLayer][4,13] = 1,1,1
+        self._layerTiles["input_" + self._mapLayer][5,13] = 1,1,1
+        self._layerTiles["input_" + self._mapLayer][6,13] = 1,1,1
+        self._layerTiles["input_" + self._mapLayer][7,13] = 1,1,1
+        self._layerTiles["input_" + self._mapLayer][0,14] = 1,1,0
+        self._layerTiles["input_" + self._mapLayer][1,14] = 0,1,0
+        self._layerTiles["input_" + self._mapLayer][2,14] = 1,1,0
+        self._layerTiles["input_" + self._mapLayer][3,14] = 0,1,0
+        self._layerTiles["input_" + self._mapLayer][4,14] = 0,0,0
+        self._layerTiles["input_" + self._mapLayer][5,14] = 0,0,0
+        self._layerTiles["input_" + self._mapLayer][6,14] = 0,0,0
+        self._layerTiles["input_" + self._mapLayer][7,14] = 0,0,0
+        self._layerTiles["input_" + self._mapLayer][0,16] = 0,1,0
+        self._layerTiles["input_" + self._mapLayer][1,16] = 0,0,0
+        self._layerTiles["input_" + self._mapLayer][2,16] = 0,0,0
+        self._layerTiles["input_" + self._mapLayer][3,16] = 0,0,0
+        self._layerTiles["input_" + self._mapLayer][4,16] = 0,0,0
+        self._layerTiles["input_" + self._mapLayer][5,16] = 0,0,0
+        self._layerTiles["input_" + self._mapLayer][6,16] = 1,1,0
+        self._layerTiles["input_" + self._mapLayer][7,16] = 0,1,0
+        self._layerTiles["input_" + self._mapLayer][0,17] = 0,1,0
+        self._layerTiles["input_" + self._mapLayer][1,17] = 1,1,1
+        self._layerTiles["input_" + self._mapLayer][2,17] = 0,1,1
+        self._layerTiles["input_" + self._mapLayer][3,17] = 0,1,1
+        self._layerTiles["input_" + self._mapLayer][4,17] = 1,1,0
+        self._layerTiles["input_" + self._mapLayer][5,17] = 1,1,0
+        self._layerTiles["input_" + self._mapLayer][6,17] = 1,1,0
+        self._layerTiles["input_" + self._mapLayer][7,17] = 1,1,0
+        self._layerTiles["input_" + self._mapLayer][0,18] = 0,1,0
+        self._layerTiles["input_" + self._mapLayer][1,18] = 0,0,0
+        self._layerTiles["input_" + self._mapLayer][2,18] = 0,1,1
+        self._layerTiles["input_" + self._mapLayer][3,18] = 0,1,0
+        self._layerTiles["input_" + self._mapLayer][4,18] = 1,1,0
+        self._layerTiles["input_" + self._mapLayer][5,18] = 0,1,0
+        self._layerTiles["input_" + self._mapLayer][6,18] = 0,0,0
+        self._layerTiles["input_" + self._mapLayer][7,18] = 0,0,0
+        self._layerTiles["input_" + self._mapLayer][0,20] = 0,1,1
+        self._layerTiles["input_" + self._mapLayer][1,20] = 0,1,0
+        self._layerTiles["input_" + self._mapLayer][2,20] = 0,0,0
+        self._layerTiles["input_" + self._mapLayer][3,20] = 0,0,0
+        self._layerTiles["input_" + self._mapLayer][4,20] = 0,1,0
+        self._layerTiles["input_" + self._mapLayer][5,20] = 0,0,0
+        self._layerTiles["input_" + self._mapLayer][6,20] = 0,0,0
+        self._layerTiles["input_" + self._mapLayer][7,20] = 0,0,0
+        self._layerTiles["input_" + self._mapLayer][0,21] = 0,1,1
+        self._layerTiles["input_" + self._mapLayer][1,21] = 0,1,1
+        self._layerTiles["input_" + self._mapLayer][2,21] = 0,1,0
+        self._layerTiles["input_" + self._mapLayer][3,21] = 0,1,1
+        self._layerTiles["input_" + self._mapLayer][4,21] = 0,1,0
+        self._layerTiles["input_" + self._mapLayer][5,21] = 1,1,0
+        self._layerTiles["input_" + self._mapLayer][6,21] = 0,1,0
+        self._layerTiles["input_" + self._mapLayer][7,21] = 0,1,0
+        self._layerTiles["input_" + self._mapLayer][0,22] = 0,0,0
+        self._layerTiles["input_" + self._mapLayer][1,22] = 0,0,0
+        self._layerTiles["input_" + self._mapLayer][2,22] = 0,1,0
+        self._layerTiles["input_" + self._mapLayer][3,22] = 0,0,0
+        self._layerTiles["input_" + self._mapLayer][4,22] = 0,0,0
+        self._layerTiles["input_" + self._mapLayer][5,22] = 0,0,0
+        self._layerTiles["input_" + self._mapLayer][6,22] = 0,0,0
+        self._layerTiles["input_" + self._mapLayer][7,22] = 0,0,0
         
     def _makeTile(self, tileType):
         tile = self._ruleConfig.createElement("tile")
@@ -533,7 +533,7 @@ class RuleMaker(Script):
         fullOrEmptyTile = self._layerTiles[layerName][x,y][groupX]
         if fullOrEmptyTile == 1 and layerName == "regions": #Sur la couche de régions, un tile plein vient du tileset spécial automapping, dont le seul tile a pour gid 48
             gid = 49
-        elif fullOrEmptyTile == 1 and layerName == "input": #Sur la couche d'Input, le tile rempli a la valeur du tile actuel de l'autotile (une couche d'input par autotile)
+        elif fullOrEmptyTile == 1 and layerName == "input_" + self._mapLayer: #Sur la couche d'Input, le tile rempli a la valeur du tile actuel de l'autotile (une couche d'input par autotile)
             gid = self._inputLayerTileCurrentGid
         elif fullOrEmptyTile == 0:
             gid = 0
@@ -550,9 +550,9 @@ class RuleMaker(Script):
                         if groupX < 3:
                             if layerName == "regions" and y < 8: #Dans la première partie de la couche de régions, on prend le tile de régions dans tous les cas
                                 tile = self._makeTile("Regions")
-                            elif layerName == "output" and not (groupX == 1 and groupY == 1): #Sur la couche d'output, quand on n'est pas au milieu du groupe, tile vide...
+                            elif layerName == "output_" + self._mapLayer and not (groupX == 1 and groupY == 1): #Sur la couche d'output, quand on n'est pas au milieu du groupe, tile vide...
                                 tile = self._makeTile("Empty")
-                            elif layerName == "output" and groupX == 1 and groupY == 1:#...Mais quand on y est, on prend la valeur du tile output du groupe
+                            elif layerName == "output_" + self._mapLayer and groupX == 1 and groupY == 1:#...Mais quand on y est, on prend la valeur du tile output du groupe
                                 tile = self._makeTile(groupId+1)
                             else: #Pour le reste, il faut utiliser les schémas définis
                                 tile = self._makeTile( self._getGidWithLayerAndPosition(layerName, x, y, groupX) )
@@ -575,25 +575,13 @@ class RuleMaker(Script):
             groupY += 1
 
     def makeRule(self, inputFilename, outputFilename):
-        layers, i = ["regions"], 0
-        while i < len(self._mapLayers):
-            layers += ["input_" + self._mapLayers[i]] * 48
-            i += 1
-        i = 0
-        while i < len(self._mapLayers):
-            layers += ["output_" + self._mapLayers[i]] 
-            i += 1
-        i = 0
+        layers, i = ["regions"] +  ["input_"+self._mapLayer]*48 + ["output_"+self._mapLayer], 0
         while i < len(layers):
             layer = self._ruleConfig.createElement("layer")
             layer.setAttribute("name", layers[i])
             layer.setAttribute("width", "32")
             layer.setAttribute("height", "24")
             layerData = self._ruleConfig.createElement("data")
-            if layers[i].find("input_") == 0:
-                layers[i] = "input"
-            elif layers[i].find("output_") == 0:
-                layers[i] = "output"
             self._makeLayerTiles(layerData, layers[i])
             layer.appendChild(layerData)
             self._ruleXML.appendChild(layer)
@@ -604,10 +592,10 @@ class RuleMaker(Script):
             i += 1
         return self._ruleConfig
 
-    def launchScript(self, inputFilename, outputFilename, mapLayers, askConfirmation, verbose, testSteps=["Input exists", "Input validity", "Output without extension", "Output already exists"]):
+    def launchScript(self, inputFilename, outputFilename, mapLayer, askConfirmation, verbose, testSteps=["Input exists", "Input validity", "Output without extension", "Output already exists"]):
         super().launchScript(inputFilename, outputFilename, askConfirmation, verbose, testSteps=testSteps)
         self._automappingRegionsBaseImagePath, self._inputLayerTileCurrentGid = (path.abspath(path.dirname(argv[0])) + "/AutomappingRegions.png").replace("\\", "/"), 1
-        self._mapLayers = mapLayers
+        self._mapLayer = mapLayer
         self._loadTileset()
         self._defineTilesContents()
         xmlData = self.makeRule(inputFilename, outputFilename)
@@ -630,7 +618,7 @@ if __name__ == "__main__":
     makeTilesetSubCommand.add_argument("-f", "--force", action="store_false", dest="askConfirmation", help="Forces the script to be executed without asking you anything. The script will overwrite the output file without warning you if it already exists. Furthermore, it won't ask add an extension to the output file if it lacks.")
     makeRuleSubCommand = subparsers.add_parser("makerule", help="Rule Maker. Generates an automapping rule for Tiled map editor using a tileset of an expanded autotile. It enables you to map autotiles automatically, without worrying about the precise case to use.")
     makeRuleSubCommand.add_argument("-o", "--output", metavar="outputRule", dest="outputRule", default="automappingRule.tmx", help="The output file (the automapping rule). By default, it is \"automappingrule.tmx\", located in the directory in which you launch the script. The script will ask you whether it should overwrite the file if it already exists, unless you used the force option.")
-    makeRuleSubCommand.add_argument("-l", "--layers", metavar="layers", dest="layers", default=["Tile Layer 1"], nargs="*", help="The map layers to consider during the automapping. By default, only \"Tile Layer 1\", the first layer is considered.")
+    makeRuleSubCommand.add_argument("-l", "--layer", metavar="mapLayer", dest="mapLayer", default="Tile Layer 1", help="The name of the map layer to consider during the automapping. By default, it is \"Tile Layer 1\".")
     makeRuleSubCommand.add_argument("inputTileset", help="The tileset for Tiled to make an automapping rule with. It must be a tsx file referring to an expanded autotile. To get the expanded autotile, use the autotile expander featured with Remex (with the command \"expand\"). To get the tileset, use the tileset maker featured with Remex (with the command \"maketileset\").")
     makeRuleSubCommand.add_argument("-v", "--verbose", action="store_true", help="Starts the program in verbose mode: it prints detailed information on the process.")
     makeRuleSubCommand.add_argument("-f", "--force", action="store_false", dest="askConfirmation", help="Forces the script to be executed without asking you anything. The script will overwrite the output file without warning you if it already exists. Furthermore, it won't ask add an extension to the output file if it lacks.")
@@ -644,5 +632,5 @@ if __name__ == "__main__":
         tilesetGenerator, outputTileset, inputExpandedAutotile = TilesetGenerator("expanded autotile", ".tsx"), answers["outputTileset"], answers["inputExpandedAutotile"]
         tilesetGenerator.launchScript(inputExpandedAutotile, outputTileset, askConfirmation, verbose)
     elif command == "makerule":
-        ruleMaker, outputRule, inputTileset, mapLayers = RuleMaker("automapping rule", ".tmx"), answers["outputRule"], answers["inputTileset"], answers["layers"]
-        ruleMaker.launchScript(inputTileset, outputRule, mapLayers, askConfirmation, verbose)
+        ruleMaker, outputRule, inputTileset, mapLayer = RuleMaker("automapping rule", ".tmx"), answers["outputRule"], answers["inputTileset"], answers["mapLayer"]
+        ruleMaker.launchScript(inputTileset, outputRule, mapLayer, askConfirmation, verbose)
