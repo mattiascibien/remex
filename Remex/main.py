@@ -590,7 +590,6 @@ class RuleMaker(Script):
             if self._inputLayerTileCurrentGid == 49:
                 self._inputLayerTileCurrentGid = 1
             i += 1
-        return self._ruleConfig
 
     def launchScript(self, inputFilename, outputFilename, mapLayer, askConfirmation, verbose, testSteps=["Input exists", "Input validity", "Output without extension", "Output already exists"]):
         super().launchScript(inputFilename, outputFilename, askConfirmation, verbose, testSteps=testSteps)
@@ -598,10 +597,12 @@ class RuleMaker(Script):
         self._mapLayer = mapLayer
         self._loadTileset()
         self._defineTilesContents()
-        xmlData = self.makeRule(inputFilename, outputFilename)
+        self.makeRule(inputFilename, outputFilename)
         with open(self._outputFilename, "w") as outputFile:
-            xmlData.writexml(outputFile, addindent="  ", newl="\n", encoding="UTF-8")
-        xmlData.unlink()
+            self._ruleConfig.writexml(outputFile, addindent="  ", newl="\n", encoding="UTF-8")
+        self._ruleConfig.unlink()
+        self._tilesetConfig.unlink()
+        self._tilesetRegionsConfig.unlink()
 
 if __name__ == "__main__":
     parser = ArgumentParser()
