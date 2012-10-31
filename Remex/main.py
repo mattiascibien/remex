@@ -247,7 +247,12 @@ class TilesetGenerator(Script):
 class RuleMaker(Script):
 
     def _checkInputValidity(self):
-        pass
+        try:
+            tilesetConfig = xml.dom.minidom.parse(self._inputFilename)
+            tilesetXML = tilesetConfig.documentElement
+        except Exception as error:
+            print("An error was encountered while loading the tileset {0}. Details:\n{1}".format(self._inputFilename,error))
+            raise SystemExit
 
     def _loadTileset(self):
         self._tilesetConfig = xml.dom.minidom.parse(self._inputFilename)
