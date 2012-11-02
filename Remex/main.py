@@ -243,7 +243,6 @@ class TilesetGenerator(Script):
         super().launchScript(inputFilename, outputFilename, askConfirmation, verbose, testSteps=testSteps)
         if relativePath is True:
             self._inputFilename = path.relpath(path.abspath(self._inputFilename), path.dirname(path.abspath(self._outputFilename))).replace("\\", "/")
-            print(path.abspath(self._inputFilename), "C:/Users/Kevin/Documents/RPG Maker to Tiled Suite/trunk/")
         else:
             self._inputFilename = path.abspath(self._inputFilename).replace("\\", "/")
         xmlData = self.makeXML(self._inputFilename, outputFilename=outputFilename)
