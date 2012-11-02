@@ -1,4 +1,4 @@
-import xml.dom.minidom
+import xml.dom.minidom, shutil
 from PIL import Image as ImagePIL
 from PIL import ImageTk
 from os import path
@@ -29,6 +29,8 @@ class Script:
             self._checkInputValidity()
         elif step == "Input size":
             self._checkInputSize()
+        elif step == "Regions image":
+            self._checkRegionsImage()
         elif step == "Output without extension":
             if self._outputFilename.lower().endswith(self._outputFileExtension) is False and self._askConfirmation is True:
                 answerIgnoreNoExtension = self._interacter.askString("The output file \"{0}\" does not have a {1} extension. Shall I add the extension? (Y/n)".format(self._outputFilename, self._outputFileExtension))
@@ -259,6 +261,14 @@ class RuleMaker(Script):
             print("An error was encountered while loading the tileset {0}. Details:\n{1}".format(self._inputFilename,error))
             raise SystemExit
 
+    def _checkRegionsImage(self):
+        regionsOriginalLocation = path.abspath(path.dirname(argv[0])).replace("\\", "/") + "/AutomappingRegions.png"
+        try:
+            image = ImagePIL.open(regionsOriginalLocation)
+        except IOError as error:
+            print("Can't find the file \"{0}\".\nThe program should always be run within its original folder to work properly. Details:\n{1}".format(regionsOriginalLocation, error))
+            raise SystemExit
+
     def _loadTileset(self):
         self._tilesetConfig = xml.dom.minidom.parse(self._inputFilename)
         self._tilesetXML = self._tilesetConfig.documentElement
@@ -273,7 +283,7 @@ class RuleMaker(Script):
         imageTilesetRegionsXML.setAttribute("width","32")
         imageTilesetRegionsXML.setAttribute("height","32")
         imageTilesetRegionsXML.setAttribute("trans","ffffff")
-        imageTilesetRegionsXML.setAttribute("source", self._automappingRegionsBaseImagePath)
+        imageTilesetRegionsXML.setAttribute("source", self._regionsLocation)
         self._tilesetRegionsXML.appendChild(imageTilesetRegionsXML)
         self._ruleConfig = xml.dom.getDOMImplementation().createDocument(None, "map", None)
         self._ruleXML = self._ruleConfig.documentElement
@@ -601,13 +611,26 @@ class RuleMaker(Script):
                 self._inputLayerTileCurrentGid = 1
             i += 1
         return self._ruleConfig
+    
+    def _copyRegionsImage(self, originalRegionsLocation):
+        try:
+            shutil.copy(originalRegionsLocation, self._regionsLocation)
+        except OSError as error:
+            print("Can't write the regions image to the location \"{0}\".\nMake sure that the location isn't read-only, or try to launch the program in admin/root mode. Details:\n{1}".format(self._regionsLocation, error))
+            raise SystemExit
+        except shutil.Error: #same file
+            pass
 
-    def launchScript(self, inputFilename, outputFilename, mapLayer, askConfirmation, verbose, testSteps=["Input exists", "Input validity", "Output without extension", "Output already exists"]):
+    def launchScript(self, inputFilename, outputFilename, mapLayer, regionsLocation, askConfirmation, verbose, testSteps=["Input exists", "Input validity", "Regions image", "Output without extension", "Output already exists"]):
         super().launchScript(inputFilename, outputFilename, askConfirmation, verbose, testSteps=testSteps)
-        self._automappingRegionsBaseImagePath, self._inputLayerTileCurrentGid = (path.abspath(path.dirname(argv[0])) + "/AutomappingRegions.png").replace("\\", "/"), 1
-        self._mapLayer = mapLayer
+        originalRegionsLocation, self._mapLayer, self._inputLayerTileCurrentGid = path.abspath(path.dirname(argv[0])).replace("\\", "/") + "/automappingRegions.png", mapLayer, 1
+        if regionsLocation == "": #No regions location: we use the program's folder
+            self._regionsLocation =  path.abspath(path.dirname(self._outputFilename)).replace("\\", "/") + "/automappingRegions.png"
+        else: 
+            self._regionsLocation = path.abspath(regionsLocation).replace("\\", "/") + "/automappingRegions.png"
         self._loadTileset()
         self._defineTilesContents()
+        self._copyRegionsImage(originalRegionsLocation)
         xmlData = self.makeRule(inputFilename, outputFilename)
         with open(self._outputFilename, "w") as outputFile:
             xmlData.writexml(outputFile, addindent="  ", newl="\n", encoding="UTF-8")
@@ -630,9 +653,10 @@ if __name__ == "__main__":
     makeTilesetSubCommand.add_argument("-r", "--relative", action="store_true", dest="relativePath", help="In the tileset file, use a relative path to the image itself. Warning: the same relative path will be used in the rulemap if you generate one with this tileset. To avoid any problem regarding paths, you should put your tilesets, maps and images in the same folder.")
     makeTilesetSubCommand.add_argument("-v", "--verbose", action="store_true", help="Starts the program in verbose mode: it prints detailed information on the process.")
     makeRuleSubCommand = subparsers.add_parser("makerule", help="Rule Maker. Generates an automapping rule for Tiled map editor using a tileset of an expanded autotile. It enables you to map autotiles automatically, without worrying about the precise case to use.")
+    makeRuleSubCommand.add_argument("inputTileset", help="The tileset for Tiled to make an automapping rule with. It must be a tsx file referring to an expanded autotile. To get the expanded autotile, use the autotile expander featured with Remex (with the command \"expand\"). To get the tileset, use the tileset maker featured with Remex (with the command \"maketileset\").")
     makeRuleSubCommand.add_argument("-o", "--output", metavar="outputRule", dest="outputRule", default="automappingRule.tmx", help="The output file (the automapping rule). By default, it is \"automappingrule.tmx\", located in the directory in which you launch the script. The script will ask you whether it should overwrite the file if it already exists, unless you used the force option.")
     makeRuleSubCommand.add_argument("-l", "--layer", metavar="mapLayer", dest="mapLayer", default="Tile Layer 1", help="The name of the map layer to consider during the automapping. By default, it is \"Tile Layer 1\".")
-    makeRuleSubCommand.add_argument("inputTileset", help="The tileset for Tiled to make an automapping rule with. It must be a tsx file referring to an expanded autotile. To get the expanded autotile, use the autotile expander featured with Remex (with the command \"expand\"). To get the tileset, use the tileset maker featured with Remex (with the command \"maketileset\").")
+    makeRuleSubCommand.add_argument("-r", "--regions", metavar="regionsLocation", dest="regionsLocation", default="", help="The rulemap requires an additional image to work properly. By default, the image is always created in the folder of the rulemap. But if you want to, you can set another location.")
     makeRuleSubCommand.add_argument("-f", "--force", action="store_false", dest="askConfirmation", help="Forces the script to be executed without asking you anything. The script will overwrite the output file without warning you if it already exists. Furthermore, it won't ask add an extension to the output file if it lacks.")
     makeRuleSubCommand.add_argument("-v", "--verbose", action="store_true", help="Starts the program in verbose mode: it prints detailed information on the process.")
     answers = vars(parser.parse_args())
@@ -647,4 +671,5 @@ if __name__ == "__main__":
         tilesetGenerator.launchScript(inputExpandedAutotile, outputTileset, relativePath, askConfirmation, verbose)
     elif command == "makerule":
         ruleMaker, outputRule, inputTileset, mapLayer = RuleMaker("automapping rule", ".tmx"), answers["outputRule"], answers["inputTileset"], answers["mapLayer"]
-        ruleMaker.launchScript(inputTileset, outputRule, mapLayer, askConfirmation, verbose)
+        regionsLocation = answers["regionsLocation"]
+        ruleMaker.launchScript(inputTileset, outputRule, mapLayer, regionsLocation, askConfirmation, verbose)
