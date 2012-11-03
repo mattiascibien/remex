@@ -611,9 +611,11 @@ class RuleMaker(Script):
             i += 1
         return self._ruleConfig
     
-    def _copyRegionsImage(self, originalRegionsLocation):
+    def copyRegionsImage(self, originalRegionsFile, newLocation=""):
+        if newLocation == "":
+            newLocation = self._regionsLocation
         try:
-            shutil.copy(originalRegionsLocation, self._regionsLocation)
+            shutil.copy(originalRegionsFile, newLocation)
         except OSError as error:
             print("Can't write the regions image to the location \"{0}\".\nMake sure that the location isn't read-only, or try to launch the program in admin/root mode. Details:\n{1}".format(self._regionsLocation, error))
             raise SystemExit
@@ -621,17 +623,18 @@ class RuleMaker(Script):
             pass
 
     def setRegionsLocation(self, regionsLocation):
-        if regionsLocation == "": #No regions location: we use the program's folder
+        if regionsLocation == "": #No regions location: we use the folder of the output file
             self._regionsLocation =  path.abspath(path.dirname(self._outputFilename)).replace("\\", "/") + "/automappingRegions.png"
         else: 
             self._regionsLocation = path.abspath(regionsLocation).replace("\\", "/") + "/automappingRegions.png"
 
-    def initializeEverything(self, inputFilename=""):
+    def initializeEverything(self, inputFilename="", mapLayer=""):
         if inputFilename != "":
             self._inputFilename = inputFilename.replace("\\", "/")
+        if mapLayer != "":
+            self._mapLayer = mapLayer
         self._loadTileset()
         self._defineTilesContents()
-        self._copyRegionsImage(originalRegionsLocation)
         self._inputLayerTileCurrentGid = 1
 
     def unlinkOtherData(self):
@@ -641,14 +644,15 @@ class RuleMaker(Script):
 
     def launchScript(self, inputFilename, outputFilename, mapLayer, regionsLocation, askConfirmation, verbose, testSteps=["Input exists", "Input validity", "Regions image", "Output without extension", "Output already exists"]):
         super().launchScript(inputFilename, outputFilename, askConfirmation, verbose, testSteps=testSteps)
-        originalRegionsLocation, self._mapLayer = path.abspath(path.dirname(argv[0])).replace("\\", "/") + "/automappingRegions.png", mapLayer
+        originalRegionsFile, self._mapLayer = path.abspath(path.dirname(argv[0])).replace("\\", "/") + "/automappingRegions.png", mapLayer
         self.setRegionsLocation(regionsLocation)
+        self.copyRegionsImage(originalRegionsFile)
         self.initializeEverything()
-        xmlData = self.makeRule(inputFilename, outputFilename)
+        xmlData = self.makeRule()
         with open(self._outputFilename, "w") as outputFile:
             xmlData.writexml(outputFile, addindent="  ", newl="\n", encoding="UTF-8")
         xmlData.unlink()
-        self.unlinkData()
+        self.unlinkOtherData()
 
 if __name__ == "__main__":
     parser = ArgumentParser()

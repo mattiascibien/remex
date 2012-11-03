@@ -2,7 +2,7 @@ from argparse import ArgumentParser
 from main import *
 from PIL import ImageTk
 from PIL import Image as ImagePIL
-from tkinter import Tk, W, S, E, ttk, filedialog, messagebox, Text, INSERT, VERTICAL, HORIZONTAL, IntVar, StringVar
+from tkinter import Tk, W, S, E, N, ttk, filedialog, messagebox, Text, INSERT, VERTICAL, HORIZONTAL, IntVar, StringVar
 from os import path
 from sys import argv
 
@@ -223,32 +223,44 @@ class RuleMakerGUI(ScriptGUI):
         self._tilesetWidgetText["text"] = "Tileset to use:"
         self._mapLayerVar = StringVar()
         self._mapLayerVar.set("Tile Layer 1")
-        self._mapLayerEntry = ttk.Entry(self._frame)
-        self._mapLayerEntry["textvariable"] = self._mapLayerVar
+        self._mapLayerEntry = ttk.Entry(self._frame, textvariable=self._mapLayerVar)
         self._mapLayerEntry.grid(column=1, row=2, sticky=(W,E))
         self._mapLayerEntryText["text"] = "Map layer to consider:\nIt is the tile layer on which the automapping will apply.\nYou can only choose a layer per rule, so you need to make another rule if you want another layer to be considered too."
-        #aa
 
     def _makeOutput(self):
-        ruleMaker = RuleMaker("automapping rule", ".tmx")
-        originalRegionsLocation = path.abspath(path.dirname(argv[0])).replace("\\", "/") + "/automappingRegions.png"
-        ruleMaker.setRegionsLocation()
-        ruleMaker.initializeEverything(inputFilename=self._inputFilename)
-        self._rule = ruleMaker.makeRule()
+        self._ruleMaker = RuleMaker("automapping rule", ".tmx")
+        self._ruleMaker.setRegionsLocation(path.abspath(path.dirname(argv[0])).replace("\\", "/"))
+        self._ruleMaker.initializeEverything(inputFilename=self._inputFilename, mapLayer=self._mapLayerVar.get())
+        self._rule = self._ruleMaker.makeRule()
 
     def _showOutput(self):
         self._ruleWidget = Text(self._frame, wrap="none")
         self._ruleWidget.insert(INSERT, self._rule.toprettyxml(indent="  ", newl="\n", encoding="UTF-8") )
-        self._ruleScrollbarX = ttk.Scrollbar(self._frame, orient=HORIZONTAL, command=self._expandedAutotileWidget.xview)
+        self._ruleScrollbarX = ttk.Scrollbar(self._frame, orient=HORIZONTAL, command=self._ruleWidget.xview)
         self._ruleWidget["xscrollcommand"] = self._ruleScrollbarX.set
+        self._ruleScrollbarY = ttk.Scrollbar(self._frame, orient=VERTICAL, command=self._ruleWidget.yview)
+        self._ruleWidget["yscrollcommand"] = self._ruleScrollbarY.set
         self._ruleWidget.grid(column=0, row=0)
         self._ruleScrollbarX.grid(column=0, row=1, sticky=(W,E))
+        self._ruleScrollbarY.grid(column=1, row=0, sticky=(N,S))
+
+    def _copyRegionsImage(self):
+        i, tilesetsXML = 0, self._rule.documentElement.getElementsByTagName("tileset")
+        while i < len(tilesetsXML):
+            if tilesetsXML[i].getAttribute("name") == "Automapping Regions":
+                imageXML = tilesetsXML[i].getElementsByTagName("image")[0]
+                newLocation = path.abspath(path.dirname(self._saveFilename)).replace("\\", "/")
+                imageXML.setAttribute("source", newLocation + "/automappingRegions.png")
+            i += 1
+        originalRegionsFile = path.abspath(path.dirname(argv[0])).replace("\\", "/") + "/automappingRegions.png"
+        self._ruleMaker.copyRegionsImage(originalRegionsFile, newLocation)
 
     def _saveData(self):
-        originalRegionsLocation = path.abspath(path.dirname(argv[0])).replace("\\", "/") + "/automappingRegions.png" 
         with open(self._saveFilename, "w") as outputFile:
-            self._tileset.writexml(outputFile, addindent="  ", newl="\n", encoding="UTF-8")
-        self._tileset.unlink()
+            self._copyRegionsImage()
+            self._rule.writexml(outputFile, addindent="  ", newl="\n", encoding="UTF-8")
+        self._rule.unlink()
+        self._ruleMaker.unlinkOtherData()
 
 class RemexGUI(GUI):
     def __init__(self):
