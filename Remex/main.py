@@ -593,7 +593,7 @@ class RuleMaker(Script):
             y += 1
             groupY += 1
 
-    def makeRule(self, inputFilename, outputFilename):
+    def makeRule(self):
         layers, i = ["regions"] +  ["input_"+self._mapLayer]*48 + ["output_"+self._mapLayer], 0
         while i < len(layers):
             layer = self._ruleConfig.createElement("layer")
@@ -620,22 +620,35 @@ class RuleMaker(Script):
         except shutil.Error: #same file
             pass
 
-    def launchScript(self, inputFilename, outputFilename, mapLayer, regionsLocation, askConfirmation, verbose, testSteps=["Input exists", "Input validity", "Regions image", "Output without extension", "Output already exists"]):
-        super().launchScript(inputFilename, outputFilename, askConfirmation, verbose, testSteps=testSteps)
-        originalRegionsLocation, self._mapLayer, self._inputLayerTileCurrentGid = path.abspath(path.dirname(argv[0])).replace("\\", "/") + "/automappingRegions.png", mapLayer, 1
+    def setRegionsLocation(self, regionsLocation):
         if regionsLocation == "": #No regions location: we use the program's folder
             self._regionsLocation =  path.abspath(path.dirname(self._outputFilename)).replace("\\", "/") + "/automappingRegions.png"
         else: 
             self._regionsLocation = path.abspath(regionsLocation).replace("\\", "/") + "/automappingRegions.png"
+
+    def initializeEverything(self, inputFilename=""):
+        if inputFilename != "":
+            self._inputFilename = inputFilename.replace("\\", "/")
         self._loadTileset()
         self._defineTilesContents()
         self._copyRegionsImage(originalRegionsLocation)
+        self._inputLayerTileCurrentGid = 1
+
+    def unlinkOtherData(self):
+        self._ruleConfig.unlink()
+        self._tilesetConfig.unlink()
+        self._tilesetRegionsConfig.unlink()
+
+    def launchScript(self, inputFilename, outputFilename, mapLayer, regionsLocation, askConfirmation, verbose, testSteps=["Input exists", "Input validity", "Regions image", "Output without extension", "Output already exists"]):
+        super().launchScript(inputFilename, outputFilename, askConfirmation, verbose, testSteps=testSteps)
+        originalRegionsLocation, self._mapLayer = path.abspath(path.dirname(argv[0])).replace("\\", "/") + "/automappingRegions.png", mapLayer
+        self.setRegionsLocation(regionsLocation)
+        self.initializeEverything()
         xmlData = self.makeRule(inputFilename, outputFilename)
         with open(self._outputFilename, "w") as outputFile:
             xmlData.writexml(outputFile, addindent="  ", newl="\n", encoding="UTF-8")
         xmlData.unlink()
-        self._tilesetConfig.unlink()
-        self._tilesetRegionsConfig.unlink()
+        self.unlinkData()
 
 if __name__ == "__main__":
     parser = ArgumentParser()

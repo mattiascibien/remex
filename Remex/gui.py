@@ -2,8 +2,9 @@ from argparse import ArgumentParser
 from main import *
 from PIL import ImageTk
 from PIL import Image as ImagePIL
-from tkinter import Tk, W, S, E, ttk, filedialog, messagebox, Text, INSERT, VERTICAL, HORIZONTAL, IntVar
+from tkinter import Tk, W, S, E, ttk, filedialog, messagebox, Text, INSERT, VERTICAL, HORIZONTAL, IntVar, StringVar
 from os import path
+from sys import argv
 
 class GUI:
     def _reloadFrame(self):
@@ -61,9 +62,11 @@ class ScriptGUI(GUI):
         elif inputCorrect is True:
             inputLoading = True
         if inputLoading is True:
-            self._proceedButton = ttk.Button(self._frame, command=self._proceed, text=self._proceedText)
-            self._proceedButton.grid(column=1, row=2)
             self._showLoadedInput()
+            self._proceedButton = ttk.Button(self._frame, command=self._proceed, text=self._proceedText)
+            lastRow = self._frame.grid_size()[1]
+            self._proceedButton.grid(column=1, row=lastRow)
+            self._backToMainMenu.grid(column=0, row=lastRow, sticky=(W,S))
             self._spaceWidgets()
             self._inputCorrectOnce = True
             self._frame.mainloop()
@@ -194,12 +197,16 @@ class RuleMakerGUI(ScriptGUI):
     def _prepareFirstStepModules(self):
         self._loadButton = ttk.Button(self._frame, text="Open...", command=self._inputChoice)
         self._loadButtonText = ttk.Label(self._frame, text="Choose an Tileset for Tiled to make an automapping rule with.\nIt must be a .tsx file referring to an expanded autotile. You can make a tileset with this software (Main menu > Generate a tileset).")
+        self._mapLayerEntry = ttk.Label(self._frame)
+        self._mapLayerEntryText = ttk.Label(self._frame)
         self._tilesetWidget = ttk.Label(self._frame)
         self._tilesetWidgetText = ttk.Label(self._frame)
         self._loadButton.grid(column=1, row=0)
         self._loadButtonText.grid(column=0, row=0, sticky=W)
         self._tilesetWidget.grid(column=1, row=1)
         self._tilesetWidgetText.grid(column=0, row=1, sticky=W)
+        self._mapLayerEntry.grid(column=1, row=2, sticky=E)
+        self._mapLayerEntryText.grid(column=0, row=2, sticky=W)
 
     def _checkInput(self):
         try:
@@ -214,6 +221,34 @@ class RuleMakerGUI(ScriptGUI):
     def _showLoadedInput(self):
         self._tilesetWidget["text"] = self._inputFilename
         self._tilesetWidgetText["text"] = "Tileset to use:"
+        self._mapLayerVar = StringVar()
+        self._mapLayerVar.set("Tile Layer 1")
+        self._mapLayerEntry = ttk.Entry(self._frame)
+        self._mapLayerEntry["textvariable"] = self._mapLayerVar
+        self._mapLayerEntry.grid(column=1, row=2, sticky=(W,E))
+        self._mapLayerEntryText["text"] = "Map layer to consider:\nIt is the tile layer on which the automapping will apply.\nYou can only choose a layer per rule, so you need to make another rule if you want another layer to be considered too."
+        #aa
+
+    def _makeOutput(self):
+        ruleMaker = RuleMaker("automapping rule", ".tmx")
+        originalRegionsLocation = path.abspath(path.dirname(argv[0])).replace("\\", "/") + "/automappingRegions.png"
+        ruleMaker.setRegionsLocation()
+        ruleMaker.initializeEverything(inputFilename=self._inputFilename)
+        self._rule = ruleMaker.makeRule()
+
+    def _showOutput(self):
+        self._ruleWidget = Text(self._frame, wrap="none")
+        self._ruleWidget.insert(INSERT, self._rule.toprettyxml(indent="  ", newl="\n", encoding="UTF-8") )
+        self._ruleScrollbarX = ttk.Scrollbar(self._frame, orient=HORIZONTAL, command=self._expandedAutotileWidget.xview)
+        self._ruleWidget["xscrollcommand"] = self._ruleScrollbarX.set
+        self._ruleWidget.grid(column=0, row=0)
+        self._ruleScrollbarX.grid(column=0, row=1, sticky=(W,E))
+
+    def _saveData(self):
+        originalRegionsLocation = path.abspath(path.dirname(argv[0])).replace("\\", "/") + "/automappingRegions.png" 
+        with open(self._saveFilename, "w") as outputFile:
+            self._tileset.writexml(outputFile, addindent="  ", newl="\n", encoding="UTF-8")
+        self._tileset.unlink()
 
 class RemexGUI(GUI):
     def __init__(self):
