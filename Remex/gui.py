@@ -189,6 +189,32 @@ class TilesetGeneratorGUI(ScriptGUI):
             self._tileset.writexml(outputFile, addindent="  ", newl="\n", encoding="UTF-8")
         self._tileset.unlink()
 
+class RuleMakerGUI(ScriptGUI):
+    
+    def _prepareFirstStepModules(self):
+        self._loadButton = ttk.Button(self._frame, text="Open...", command=self._inputChoice)
+        self._loadButtonText = ttk.Label(self._frame, text="Choose an Tileset for Tiled to make an automapping rule with.\nIt must be a .tsx file referring to an expanded autotile. You can make a tileset with this software (Main menu > Generate a tileset).")
+        self._tilesetWidget = ttk.Label(self._frame)
+        self._tilesetWidgetText = ttk.Label(self._frame)
+        self._loadButton.grid(column=1, row=0)
+        self._loadButtonText.grid(column=0, row=0, sticky=W)
+        self._tilesetWidget.grid(column=1, row=1)
+        self._tilesetWidgetText.grid(column=0, row=1, sticky=W)
+
+    def _checkInput(self):
+        try:
+            tilesetConfig = xml.dom.minidom.parse(self._inputFilename)
+            tilesetXML = tilesetConfig.documentElement
+        except Exception as error:
+            print("An error was encountered while loading the tileset {0}. Details:\n{1}".format(self._inputFilename,error))
+            messagebox.showwarning(title="The tileset is invalid", message="An error was encountered while loading the tileset.", detail="{0}".format(error))
+        else:
+            return True
+
+    def _showLoadedInput(self):
+        self._tilesetWidget["text"] = self._inputFilename
+        self._tilesetWidgetText["text"] = "Tileset to use:"
+
 class RemexGUI(GUI):
     def __init__(self):
         self._initializeTkinter()
@@ -228,7 +254,8 @@ class RemexGUI(GUI):
         tilesetGeneratorGUI._prepareFirstStepWindow()
 
     def _prepareRuleMakerWindow(self):
-        self._reloadFrame()
+        ruleMakerGUI = RuleMakerGUI(self._frame, self._windowHandler, "No tileset", "No tileset to make an automapping rule was found.", "Please make sure that the file \"{0}\" exists.", "Make an automapping rule!", "Make another automapping rule", "Automapping rule", ".tmx", "automappingRule.tmx", "Tileset for Tiled", ".tsx", self._prepareStartWindow)
+        ruleMakerGUI._prepareFirstStepWindow()
 
 if __name__ == "__main__":
     parser = ArgumentParser()
