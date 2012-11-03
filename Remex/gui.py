@@ -75,7 +75,6 @@ class ScriptGUI(GUI):
         if self._inputFilename != "" and path.exists(self._inputFilename) is True:
             return self._checkInput()
         else:
-            print("empty")
             if emptyStringWarning:
                 messagebox.showwarning(title=self._noInputFileFound, message=self._noInputFileFoundLonger, detail=self._noInputFileFoundExplanation.format(self._inputFilename))
             return False

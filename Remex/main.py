@@ -676,7 +676,6 @@ if __name__ == "__main__":
     makeRuleSubCommand.add_argument("-f", "--force", action="store_false", dest="askConfirmation", help="Forces the script to be executed without asking you anything. The script will overwrite the output file without warning you if it already exists. Furthermore, it won't ask add an extension to the output file if it lacks.")
     makeRuleSubCommand.add_argument("-v", "--verbose", action="store_true", help="Starts the program in verbose mode: it prints detailed information on the process.")
     answers = vars(parser.parse_args())
-    print(answers)
     command, verbose, askConfirmation = answers["command"], answers["verbose"], answers["askConfirmation"]
     if command == "expand":
         autotileExpander, outputAutotile, inputAutotile = AutotileExpander("autotile", ".png"), answers["outputAutotile"], answers["inputAutotile"]
