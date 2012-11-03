@@ -146,24 +146,14 @@ class ExpanderGUI(ScriptGUI):
 class TilesetGeneratorGUI(ScriptGUI):
 
     def _prepareFirstStepModules(self):
-        #self._useRelativePath = IntVar()
-        #self._useRelativePath.set(0)
         self._loadButton = ttk.Button(self._frame, text="Open...", command=self._inputChoice)
         self._loadButtonText = ttk.Label(self._frame, text="Choose an expanded autotile to make a tileset with.\nPNG only, 256 per 192 pixels. You can expand an autotile from RPG Maker VX / VX Ace with this software (Main menu > Expand an autotile).")
         self._autotileWidget = ttk.Label(self._frame, compound="image")
         self._autotileWidgetText = ttk.Label(self._frame)
-        #self._relativePathButton = ttk.Checkbutton(self._frame, text="Use a relative path to the image", variable=self._useRelativePath, command=self._changePath)
         self._loadButton.grid(column=1, row=0)
         self._loadButtonText.grid(column=0, row=0, sticky=W)
         self._autotileWidget.grid(column=1, row=1)
         self._autotileWidgetText.grid(column=0, row=1, sticky=W)
-        #self._relativePathButton.grid(column=0, row=2, sticky=W)
-
-    def _changePath(self):
-        if self._useRelativePath.get() == 1:
-            self._inputFilename = path.relpath(path.abspath(self._inputFilename), path.dirname(path.abspath(self._outputFilename))).replace("\\", "/")
-        else:
-            self._inputFilename = path.abspath(self._inputFilename).replace("\\", "/")
 
     def _checkInput(self):
         try:
