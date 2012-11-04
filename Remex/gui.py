@@ -196,16 +196,8 @@ class RuleMakerGUI(ScriptGUI):
     def _prepareFirstStepModules(self):
         self._loadButton = ttk.Button(self._frame, text="Open...", command=self._inputChoice)
         self._loadButtonText = ttk.Label(self._frame, text="Choose an Tileset for Tiled to make an automapping rule with.\nIt must be a .tsx file referring to an expanded autotile. You can make a tileset with this software (Main menu > Generate a tileset).")
-        self._mapLayerEntry = ttk.Label(self._frame)
-        self._mapLayerEntryText = ttk.Label(self._frame)
-        self._tilesetWidget = ttk.Label(self._frame)
-        self._tilesetWidgetText = ttk.Label(self._frame)
         self._loadButton.grid(column=1, row=0)
         self._loadButtonText.grid(column=0, row=0, sticky=W)
-        self._tilesetWidget.grid(column=1, row=1)
-        self._tilesetWidgetText.grid(column=0, row=1, sticky=W)
-        self._mapLayerEntry.grid(column=1, row=2, sticky=E)
-        self._mapLayerEntryText.grid(column=0, row=2, sticky=W)
 
     def _checkInput(self):
         try:
@@ -218,18 +210,32 @@ class RuleMakerGUI(ScriptGUI):
             return True
 
     def _showLoadedInput(self):
-        self._tilesetWidget["text"] = self._inputFilename
-        self._tilesetWidgetText["text"] = "Tileset to use:"
+        self._tilesetWidget = ttk.Label(self._frame, text=self._inputFilename)
+        self._tilesetWidgetText = ttk.Label(self._frame, text="Tileset to use:")
         self._mapLayerVar = StringVar()
         self._mapLayerVar.set("Tile Layer 1")
         self._mapLayerEntry = ttk.Entry(self._frame, textvariable=self._mapLayerVar)
+        self._mapLayerEntryText = ttk.Label(self._frame, text="Map layer to consider:\nIt is the tile layer on which the automapping will apply.\nYou can only choose a layer per rule, so you need to make another rule if you want another layer to be considered too.")
+        self._version08 = StringVar()
+        self._version08.set("False")
+        self._versionRadiobuttonText = ttk.Label(self._frame, text="Which version of Tiled do you use?")
+        self._version09Radiobutton = ttk.Radiobutton(self._frame, text="Tiled 0.9", variable=self._version08, value="False")
+        self._version08Radiobutton = ttk.Radiobutton(self._frame, text="Tiled 0.8", variable=self._version08, value="True")
+        self._tilesetWidget.grid(column=1, row=1)
+        self._tilesetWidgetText.grid(column=0, row=1, sticky=W)
         self._mapLayerEntry.grid(column=1, row=2, sticky=(W,E))
-        self._mapLayerEntryText["text"] = "Map layer to consider:\nIt is the tile layer on which the automapping will apply.\nYou can only choose a layer per rule, so you need to make another rule if you want another layer to be considered too."
+        self._mapLayerEntryText.grid(column=0, row=2, sticky=W)
+        self._versionRadiobuttonText.grid(column=0, row=3, sticky=W)
+        self._version09Radiobutton.grid(column=0, row=4, sticky=W)
+        self._version08Radiobutton.grid(column=1, row=4, sticky=W)
 
     def _makeOutput(self):
         self._ruleMaker = RuleMaker("automapping rule", ".tmx")
         self._ruleMaker.setRegionsLocation(path.abspath(path.dirname(argv[0])).replace("\\", "/"))
-        self._ruleMaker.initializeEverything(inputFilename=self._inputFilename, mapLayer=self._mapLayerVar.get())
+        version08 = False
+        if self._version08.get() == "True":
+            version08 = True
+        self._ruleMaker.initializeEverything(inputFilename=self._inputFilename, mapLayer=self._mapLayerVar.get(), version08=version08)
         self._rule = self._ruleMaker.makeRule()
 
     def _showOutput(self):
