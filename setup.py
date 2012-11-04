@@ -2,7 +2,7 @@ import sys
 from cx_Freeze import setup, Executable
 
 # Dependencies are automatically detected, but it might need fine tuning.
-build_exe_options = {"packages": ["tkinter", "PIL","argparse"], "excludes": [], "icon": "NuvolaTileIcon.ico", "include_files":[("NuvolaTileIcon.ico","NuvolaTileIcon.ico")]}
+build_exe_options = {"packages": ["tkinter", "PIL","argparse"], "compressed":"True", "icon": "NuvolaTileIcon.ico", "include_files":[("NuvolaTileIcon.ico","NuvolaTileIcon.ico"), ("automappingRegions.png", "automappingRegions.png")]}
 
 # GUI applications require a different base on Windows (the default is for a
 # console application).
