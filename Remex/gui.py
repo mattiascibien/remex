@@ -109,12 +109,8 @@ class ExpanderGUI(ScriptGUI):
     def _prepareFirstStepModules(self):
         self._loadButton = ttk.Button(self._frame, text="Open...", command=self._inputChoice)
         self._loadButtonText = ttk.Label(self._frame, text="Choose an autotile to expand.\nPNG only, 64 per 96 pixels. It must use the TileA2 format from VX / VX Ace.")
-        self._autotileWidget = ttk.Label(self._frame, compound="image")
-        self._autotileWidgetText = ttk.Label(self._frame)
         self._loadButton.grid(column=1, row=0)
         self._loadButtonText.grid(column=0, row=0, sticky=W)
-        self._autotileWidget.grid(column=1, row=1)
-        self._autotileWidgetText.grid(column=0, row=1, sticky=W)
 
     def _checkInput(self):
         try:
@@ -130,8 +126,10 @@ class ExpanderGUI(ScriptGUI):
     def _showLoadedInput(self):
         self._imageAutotile = ImagePIL.open(self._inputFilename)
         self._imageWidget = ImageTk.PhotoImage(self._imageAutotile)
-        self._autotileWidget["image"] = self._imageWidget
-        self._autotileWidgetText["text"] = "Autotile to expand:"  
+        self._autotileWidget = ttk.Label(self._frame, compound="image", image=self._imageWidget)
+        self._autotileWidgetText = ttk.Label(self._frame, text="Autotile to expand:")
+        self._autotileWidget.grid(column=1, row=1)
+        self._autotileWidgetText.grid(column=0, row=1, sticky=W)
 
     def _makeOutput(self):
         autotileExpander = AutotileExpander("autotile", ".png")
@@ -150,12 +148,8 @@ class TilesetGeneratorGUI(ScriptGUI):
     def _prepareFirstStepModules(self):
         self._loadButton = ttk.Button(self._frame, text="Open...", command=self._inputChoice)
         self._loadButtonText = ttk.Label(self._frame, text="Choose an expanded autotile to make a tileset with.\nPNG only, 256 per 192 pixels. You can expand an autotile from RPG Maker VX / VX Ace with this software (Main menu > Expand an autotile).")
-        self._autotileWidget = ttk.Label(self._frame, compound="image")
-        self._autotileWidgetText = ttk.Label(self._frame)
         self._loadButton.grid(column=1, row=0)
         self._loadButtonText.grid(column=0, row=0, sticky=W)
-        self._autotileWidget.grid(column=1, row=1)
-        self._autotileWidgetText.grid(column=0, row=1, sticky=W)
 
     def _checkInput(self):
         try:
@@ -171,8 +165,10 @@ class TilesetGeneratorGUI(ScriptGUI):
     def _showLoadedInput(self):
         self._imageAutotile = ImagePIL.open(self._inputFilename)
         self._imageWidget = ImageTk.PhotoImage(self._imageAutotile)
-        self._autotileWidget["image"] = self._imageWidget
-        self._autotileWidgetText["text"] = "Expanded autotile to make a tileset with:"  
+        self._autotileWidget = ttk.Label(self._frame, compound="image", image=self._imageWidget)
+        self._autotileWidgetText = ttk.Label(self._frame, text="Expanded autotile to make a tileset with:")
+        self._autotileWidget.grid(column=1, row=1)
+        self._autotileWidgetText.grid(column=0, row=1, sticky=W)
 
     def _makeOutput(self):
         tilesetGenerator = TilesetGenerator("expanded autotile", ".tsx")
