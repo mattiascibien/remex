@@ -177,6 +177,7 @@ class TilesetGeneratorGUI(ScriptGUI):
     def _showOutput(self):
         self._expandedAutotileWidget = Text(self._frame, wrap="none")
         self._expandedAutotileWidget.insert(INSERT, self._tileset.toprettyxml(indent="  ", newl="\n", encoding="UTF-8") )
+        self._expandedAutotileWidget["state"] = "disabled"
         self._expandedAutotileScrollbarX = ttk.Scrollbar(self._frame, orient=HORIZONTAL, command=self._expandedAutotileWidget.xview)
         self._expandedAutotileWidget["xscrollcommand"] = self._expandedAutotileScrollbarX.set
         self._expandedAutotileWidget.grid(column=0, row=0)
@@ -235,15 +236,18 @@ class RuleMakerGUI(ScriptGUI):
         self._rule = self._ruleMaker.makeRule()
 
     def _showOutput(self):
+        self._warningText = ttk.Label(self._frame, text="Don't use the code below, it won't work, it's only a preview. The final code will be slightly different. Please click on \"Save as\" to complete the operation.")
         self._ruleWidget = Text(self._frame, wrap="none")
         self._ruleWidget.insert(INSERT, self._rule.toprettyxml(indent="  ", newl="\n", encoding="UTF-8") )
+        self._ruleWidget["state"] = "disabled"
         self._ruleScrollbarX = ttk.Scrollbar(self._frame, orient=HORIZONTAL, command=self._ruleWidget.xview)
         self._ruleWidget["xscrollcommand"] = self._ruleScrollbarX.set
         self._ruleScrollbarY = ttk.Scrollbar(self._frame, orient=VERTICAL, command=self._ruleWidget.yview)
         self._ruleWidget["yscrollcommand"] = self._ruleScrollbarY.set
-        self._ruleWidget.grid(column=0, row=0)
-        self._ruleScrollbarX.grid(column=0, row=1, sticky=(W,E))
-        self._ruleScrollbarY.grid(column=1, row=0, sticky=(N,S))
+        self._warningText.grid(column=0, row=0)
+        self._ruleWidget.grid(column=0, row=1, sticky=(W,E,S,N))
+        self._ruleScrollbarX.grid(column=0, row=2, sticky=(W,E))
+        self._ruleScrollbarY.grid(column=1, row=1, sticky=(N,S))
 
     def _createRegionsImage(self):
         i, tilesetsXML = 0, self._rule.documentElement.getElementsByTagName("tileset")
