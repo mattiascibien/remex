@@ -192,7 +192,7 @@ class RuleMakerGUI(ScriptGUI):
     
     def _prepareFirstStepModules(self):
         self._loadButton = ttk.Button(self._frame, text="Open...", command=self._inputChoice)
-        self._loadButtonText = ttk.Label(self._frame, text="Choose an Tileset for Tiled to make an automapping rule with.\nIt must be a .tsx file referring to an expanded autotile. You can make a tileset with this software (Main menu > Generate a tileset).")
+        self._loadButtonText = ttk.Label(self._frame, text="Choose a Tileset for Tiled to make an automapping rule with.\nIt must be a .tsx file referring to an expanded autotile. You can make a tileset with this software (Main menu > Generate a tileset for Tiled editor).")
         self._loadButton.grid(column=1, row=0)
         self._loadButtonText.grid(column=0, row=0, sticky=W)
 
@@ -288,7 +288,7 @@ class RemexGUI(GUI):
 
     def _prepareStartWindow(self):
         self._expanderButton = ttk.Button(self._frame, text="Expand an autotile", command=self._prepareExpanderWindow)
-        self._tilesetGeneratorButton = ttk.Button(self._frame, text="Generate a tileset for Tiled editor from an expanded autotile", command=self._prepareTilesetGeneratorWindow)
+        self._tilesetGeneratorButton = ttk.Button(self._frame, text="Generate a tileset for Tiled editor", command=self._prepareTilesetGeneratorWindow)
         self._ruleMakerButton = ttk.Button(self._frame, text="Make an automapping rule for Tiled editor", command=self._prepareRuleMakerWindow)
         self._frame.grid(column=0, row=0)
         self._expanderButton.grid(column=0, row=0)
