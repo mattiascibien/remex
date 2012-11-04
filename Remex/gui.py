@@ -245,7 +245,7 @@ class RuleMakerGUI(ScriptGUI):
         self._ruleScrollbarX.grid(column=0, row=1, sticky=(W,E))
         self._ruleScrollbarY.grid(column=1, row=0, sticky=(N,S))
 
-    def _copyRegionsImage(self):
+    def _createRegionsImage(self):
         i, tilesetsXML = 0, self._rule.documentElement.getElementsByTagName("tileset")
         while i < len(tilesetsXML):
             if tilesetsXML[i].getAttribute("name") == "Automapping Regions":
@@ -253,12 +253,11 @@ class RuleMakerGUI(ScriptGUI):
                 newLocation = path.abspath(path.dirname(self._saveFilename)).replace("\\", "/")
                 imageXML.setAttribute("source", newLocation + "/automappingRegions.png")
             i += 1
-        originalRegionsFile = path.abspath(path.dirname(argv[0])).replace("\\", "/") + "/automappingRegions.png"
-        self._ruleMaker.copyRegionsImage(originalRegionsFile, newLocation)
+        self._ruleMaker.createRegionsImage(newLocation + "/automappingRegions.png")
 
     def _saveData(self):
         with open(self._saveFilename, "w") as outputFile:
-            self._copyRegionsImage()
+            self._createRegionsImage()
             self._rule.writexml(outputFile, addindent="  ", newl="\n", encoding="UTF-8")
         self._rule.unlink()
         self._ruleMaker.unlinkOtherData()

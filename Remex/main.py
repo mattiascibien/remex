@@ -1,4 +1,4 @@
-import xml.dom.minidom, shutil
+import xml.dom.minidom
 from PIL import Image as ImagePIL
 from PIL import ImageTk
 from os import path
@@ -625,16 +625,15 @@ class RuleMaker(Script):
             i += 1
         return self._ruleConfig
     
-    def copyRegionsImage(self, originalRegionsFile, newLocation=""):
-        if newLocation == "":
-            newLocation = self._regionsLocation
+    def createRegionsImage(self, newRegionsFile=""):
+        if newRegionsFile == "":
+            newRegionsFile = self._regionsLocation
         try:
-            shutil.copy(originalRegionsFile, newLocation)
-        except OSError as error:
+            automappingImage = ImagePIL.new("RGB", (32, 32), (255, 0, 0))
+            automappingImage.save(newRegionsFile, "PNG")
+        except Exception as error:
             print("Can't write the regions image to the location \"{0}\".\nMake sure that the location isn't read-only, or try to launch the program in admin/root mode. Details:\n{1}".format(self._regionsLocation, error))
             raise SystemExit
-        except shutil.Error: #same file
-            pass
 
     def setRegionsLocation(self, regionsLocation):
         if regionsLocation == "": #No regions location: we use the folder of the output file
@@ -662,7 +661,7 @@ class RuleMaker(Script):
         super().launchScript(inputFilename, outputFilename, askConfirmation, verbose, testSteps=testSteps)
         originalRegionsFile, self._mapLayer, self._version08 = path.abspath(path.dirname(argv[0])).replace("\\", "/") + "/automappingRegions.png", mapLayer, version08
         self.setRegionsLocation(regionsLocation)
-        self.copyRegionsImage(originalRegionsFile)
+        self.createRegionsImage()
         self.initializeEverything()
         xmlData = self.makeRule()
         with open(self._outputFilename, "w") as outputFile:
