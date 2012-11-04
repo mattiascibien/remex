@@ -109,12 +109,8 @@ class ExpanderGUI(ScriptGUI):
     def _prepareFirstStepModules(self):
         self._loadButton = ttk.Button(self._frame, text="Open...", command=self._inputChoice)
         self._loadButtonText = ttk.Label(self._frame, text="Choose an autotile to expand.\nPNG only, 64 per 96 pixels. It must use the TileA2 format from VX / VX Ace.")
-        self._autotileWidget = ttk.Label(self._frame, compound="image")
-        self._autotileWidgetText = ttk.Label(self._frame)
         self._loadButton.grid(column=1, row=0)
         self._loadButtonText.grid(column=0, row=0, sticky=W)
-        self._autotileWidget.grid(column=1, row=1)
-        self._autotileWidgetText.grid(column=0, row=1, sticky=W)
 
     def _checkInput(self):
         try:
@@ -130,8 +126,10 @@ class ExpanderGUI(ScriptGUI):
     def _showLoadedInput(self):
         self._imageAutotile = ImagePIL.open(self._inputFilename)
         self._imageWidget = ImageTk.PhotoImage(self._imageAutotile)
-        self._autotileWidget["image"] = self._imageWidget
-        self._autotileWidgetText["text"] = "Autotile to expand:"  
+        self._autotileWidget = ttk.Label(self._frame, compound="image", image=self._imageWidget)
+        self._autotileWidgetText = ttk.Label(self._frame, text="Autotile to expand:")
+        self._autotileWidget.grid(column=1, row=1)
+        self._autotileWidgetText.grid(column=0, row=1, sticky=W)
 
     def _makeOutput(self):
         autotileExpander = AutotileExpander("autotile", ".png")
@@ -150,12 +148,8 @@ class TilesetGeneratorGUI(ScriptGUI):
     def _prepareFirstStepModules(self):
         self._loadButton = ttk.Button(self._frame, text="Open...", command=self._inputChoice)
         self._loadButtonText = ttk.Label(self._frame, text="Choose an expanded autotile to make a tileset with.\nPNG only, 256 per 192 pixels. You can expand an autotile from RPG Maker VX / VX Ace with this software (Main menu > Expand an autotile).")
-        self._autotileWidget = ttk.Label(self._frame, compound="image")
-        self._autotileWidgetText = ttk.Label(self._frame)
         self._loadButton.grid(column=1, row=0)
         self._loadButtonText.grid(column=0, row=0, sticky=W)
-        self._autotileWidget.grid(column=1, row=1)
-        self._autotileWidgetText.grid(column=0, row=1, sticky=W)
 
     def _checkInput(self):
         try:
@@ -171,8 +165,10 @@ class TilesetGeneratorGUI(ScriptGUI):
     def _showLoadedInput(self):
         self._imageAutotile = ImagePIL.open(self._inputFilename)
         self._imageWidget = ImageTk.PhotoImage(self._imageAutotile)
-        self._autotileWidget["image"] = self._imageWidget
-        self._autotileWidgetText["text"] = "Expanded autotile to make a tileset with:"  
+        self._autotileWidget = ttk.Label(self._frame, compound="image", image=self._imageWidget)
+        self._autotileWidgetText = ttk.Label(self._frame, text="Expanded autotile to make a tileset with:")
+        self._autotileWidget.grid(column=1, row=1)
+        self._autotileWidgetText.grid(column=0, row=1, sticky=W)
 
     def _makeOutput(self):
         tilesetGenerator = TilesetGenerator("expanded autotile", ".tsx")
@@ -181,6 +177,7 @@ class TilesetGeneratorGUI(ScriptGUI):
     def _showOutput(self):
         self._expandedAutotileWidget = Text(self._frame, wrap="none")
         self._expandedAutotileWidget.insert(INSERT, self._tileset.toprettyxml(indent="  ", newl="\n", encoding="UTF-8") )
+        self._expandedAutotileWidget["state"] = "disabled"
         self._expandedAutotileScrollbarX = ttk.Scrollbar(self._frame, orient=HORIZONTAL, command=self._expandedAutotileWidget.xview)
         self._expandedAutotileWidget["xscrollcommand"] = self._expandedAutotileScrollbarX.set
         self._expandedAutotileWidget.grid(column=0, row=0)
@@ -195,17 +192,9 @@ class RuleMakerGUI(ScriptGUI):
     
     def _prepareFirstStepModules(self):
         self._loadButton = ttk.Button(self._frame, text="Open...", command=self._inputChoice)
-        self._loadButtonText = ttk.Label(self._frame, text="Choose an Tileset for Tiled to make an automapping rule with.\nIt must be a .tsx file referring to an expanded autotile. You can make a tileset with this software (Main menu > Generate a tileset).")
-        self._mapLayerEntry = ttk.Label(self._frame)
-        self._mapLayerEntryText = ttk.Label(self._frame)
-        self._tilesetWidget = ttk.Label(self._frame)
-        self._tilesetWidgetText = ttk.Label(self._frame)
+        self._loadButtonText = ttk.Label(self._frame, text="Choose a Tileset for Tiled to make an automapping rule with.\nIt must be a .tsx file referring to an expanded autotile. You can make a tileset with this software (Main menu > Generate a tileset for Tiled editor).")
         self._loadButton.grid(column=1, row=0)
         self._loadButtonText.grid(column=0, row=0, sticky=W)
-        self._tilesetWidget.grid(column=1, row=1)
-        self._tilesetWidgetText.grid(column=0, row=1, sticky=W)
-        self._mapLayerEntry.grid(column=1, row=2, sticky=E)
-        self._mapLayerEntryText.grid(column=0, row=2, sticky=W)
 
     def _checkInput(self):
         try:
@@ -218,32 +207,49 @@ class RuleMakerGUI(ScriptGUI):
             return True
 
     def _showLoadedInput(self):
-        self._tilesetWidget["text"] = self._inputFilename
-        self._tilesetWidgetText["text"] = "Tileset to use:"
+        self._tilesetWidget = ttk.Label(self._frame, text=self._inputFilename)
+        self._tilesetWidgetText = ttk.Label(self._frame, text="Tileset to use:")
         self._mapLayerVar = StringVar()
         self._mapLayerVar.set("Tile Layer 1")
         self._mapLayerEntry = ttk.Entry(self._frame, textvariable=self._mapLayerVar)
+        self._mapLayerEntryText = ttk.Label(self._frame, text="Map layer to consider:\nIt is the tile layer on which the automapping will apply.\nYou can only choose a layer per rule, so you need to make another rule if you want another layer to be considered too.")
+        self._version08 = StringVar()
+        self._version08.set("False")
+        self._versionRadiobuttonText = ttk.Label(self._frame, text="Which version of Tiled do you use?")
+        self._version09Radiobutton = ttk.Radiobutton(self._frame, text="Tiled 0.9", variable=self._version08, value="False")
+        self._version08Radiobutton = ttk.Radiobutton(self._frame, text="Tiled 0.8", variable=self._version08, value="True")
+        self._tilesetWidget.grid(column=1, row=1)
+        self._tilesetWidgetText.grid(column=0, row=1, sticky=W)
         self._mapLayerEntry.grid(column=1, row=2, sticky=(W,E))
-        self._mapLayerEntryText["text"] = "Map layer to consider:\nIt is the tile layer on which the automapping will apply.\nYou can only choose a layer per rule, so you need to make another rule if you want another layer to be considered too."
+        self._mapLayerEntryText.grid(column=0, row=2, sticky=W)
+        self._versionRadiobuttonText.grid(column=0, row=3, sticky=W)
+        self._version09Radiobutton.grid(column=0, row=4, sticky=W)
+        self._version08Radiobutton.grid(column=1, row=4, sticky=W)
 
     def _makeOutput(self):
         self._ruleMaker = RuleMaker("automapping rule", ".tmx")
         self._ruleMaker.setRegionsLocation(path.abspath(path.dirname(argv[0])).replace("\\", "/"))
-        self._ruleMaker.initializeEverything(inputFilename=self._inputFilename, mapLayer=self._mapLayerVar.get())
+        version08 = False
+        if self._version08.get() == "True":
+            version08 = True
+        self._ruleMaker.initializeEverything(inputFilename=self._inputFilename, mapLayer=self._mapLayerVar.get(), version08=version08)
         self._rule = self._ruleMaker.makeRule()
 
     def _showOutput(self):
+        self._warningText = ttk.Label(self._frame, text="Don't use the code below, it won't work, it's only a preview. The final code will be slightly different. Please click on \"Save as\" to complete the operation.")
         self._ruleWidget = Text(self._frame, wrap="none")
         self._ruleWidget.insert(INSERT, self._rule.toprettyxml(indent="  ", newl="\n", encoding="UTF-8") )
+        self._ruleWidget["state"] = "disabled"
         self._ruleScrollbarX = ttk.Scrollbar(self._frame, orient=HORIZONTAL, command=self._ruleWidget.xview)
         self._ruleWidget["xscrollcommand"] = self._ruleScrollbarX.set
         self._ruleScrollbarY = ttk.Scrollbar(self._frame, orient=VERTICAL, command=self._ruleWidget.yview)
         self._ruleWidget["yscrollcommand"] = self._ruleScrollbarY.set
-        self._ruleWidget.grid(column=0, row=0)
-        self._ruleScrollbarX.grid(column=0, row=1, sticky=(W,E))
-        self._ruleScrollbarY.grid(column=1, row=0, sticky=(N,S))
+        self._warningText.grid(column=0, row=0)
+        self._ruleWidget.grid(column=0, row=1, sticky=(W,E,S,N))
+        self._ruleScrollbarX.grid(column=0, row=2, sticky=(W,E))
+        self._ruleScrollbarY.grid(column=1, row=1, sticky=(N,S))
 
-    def _copyRegionsImage(self):
+    def _createRegionsImage(self):
         i, tilesetsXML = 0, self._rule.documentElement.getElementsByTagName("tileset")
         while i < len(tilesetsXML):
             if tilesetsXML[i].getAttribute("name") == "Automapping Regions":
@@ -251,12 +257,11 @@ class RuleMakerGUI(ScriptGUI):
                 newLocation = path.abspath(path.dirname(self._saveFilename)).replace("\\", "/")
                 imageXML.setAttribute("source", newLocation + "/automappingRegions.png")
             i += 1
-        originalRegionsFile = path.abspath(path.dirname(argv[0])).replace("\\", "/") + "/automappingRegions.png"
-        self._ruleMaker.copyRegionsImage(originalRegionsFile, newLocation)
+        self._ruleMaker.createRegionsImage(newLocation + "/automappingRegions.png")
 
     def _saveData(self):
         with open(self._saveFilename, "w") as outputFile:
-            self._copyRegionsImage()
+            self._createRegionsImage()
             self._rule.writexml(outputFile, addindent="  ", newl="\n", encoding="UTF-8")
         self._rule.unlink()
         self._ruleMaker.unlinkOtherData()
@@ -283,7 +288,7 @@ class RemexGUI(GUI):
 
     def _prepareStartWindow(self):
         self._expanderButton = ttk.Button(self._frame, text="Expand an autotile", command=self._prepareExpanderWindow)
-        self._tilesetGeneratorButton = ttk.Button(self._frame, text="Generate a tileset for Tiled editor from an expanded autotile", command=self._prepareTilesetGeneratorWindow)
+        self._tilesetGeneratorButton = ttk.Button(self._frame, text="Generate a tileset for Tiled editor", command=self._prepareTilesetGeneratorWindow)
         self._ruleMakerButton = ttk.Button(self._frame, text="Make an automapping rule for Tiled editor", command=self._prepareRuleMakerWindow)
         self._frame.grid(column=0, row=0)
         self._expanderButton.grid(column=0, row=0)
