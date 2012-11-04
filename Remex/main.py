@@ -593,14 +593,28 @@ class RuleMaker(Script):
             y += 1
             groupY += 1
 
+    def _convertLayerNameVersion08(self, layerName):
+        if layerName == "RuleRegion":
+            layerName = "regions"
+        elif layerName == "RuleSet":
+            layerName = "input_" + self._mapLayer
+        elif layerName[:5] == "Rule_":
+            layerName = "output_" + self._mapLayer
+        return layerName
+
     def makeRule(self):
-        layers, i = ["regions"] +  ["input_"+self._mapLayer]*48 + ["output_"+self._mapLayer], 0
+        if self._version08 is False: #Tiled 0.9 style
+            layers = ["regions"] +  ["input_"+self._mapLayer]*48 + ["output_"+self._mapLayer]
+        else: #Tiled 0.8 style
+            layers = ["RuleRegion"] + ["RuleSet"]*48 + ["Rule_"+self._mapLayer]
+        i = 0
         while i < len(layers):
             layer = self._ruleConfig.createElement("layer")
             layer.setAttribute("name", layers[i])
             layer.setAttribute("width", "32")
             layer.setAttribute("height", "24")
             layerData = self._ruleConfig.createElement("data")
+            layers[i] = self._convertLayerNameVersion08(layers[i]) #Once the layers have been created, we must convert the ones in 0.8 style into layers in 0.9 style, so that they work with the rest of the program
             self._makeLayerTiles(layerData, layers[i])
             layer.appendChild(layerData)
             self._ruleXML.appendChild(layer)
@@ -628,11 +642,13 @@ class RuleMaker(Script):
         else: 
             self._regionsLocation = path.abspath(regionsLocation).replace("\\", "/") + "/automappingRegions.png"
 
-    def initializeEverything(self, inputFilename="", mapLayer=""):
+    def initializeEverything(self, inputFilename="", mapLayer="", version08=""):
         if inputFilename != "":
             self._inputFilename = inputFilename.replace("\\", "/")
         if mapLayer != "":
             self._mapLayer = mapLayer
+        if version08 != "":
+            self._version08 = version08
         self._loadTileset()
         self._defineTilesContents()
         self._inputLayerTileCurrentGid = 1
@@ -642,9 +658,9 @@ class RuleMaker(Script):
         self._tilesetConfig.unlink()
         self._tilesetRegionsConfig.unlink()
 
-    def launchScript(self, inputFilename, outputFilename, mapLayer, regionsLocation, askConfirmation, verbose, testSteps=["Input exists", "Input validity", "Regions image", "Output without extension", "Output already exists"]):
+    def launchScript(self, inputFilename, outputFilename, mapLayer, regionsLocation, version08, askConfirmation, verbose, testSteps=["Input exists", "Input validity", "Regions image", "Output without extension", "Output already exists"]):
         super().launchScript(inputFilename, outputFilename, askConfirmation, verbose, testSteps=testSteps)
-        originalRegionsFile, self._mapLayer = path.abspath(path.dirname(argv[0])).replace("\\", "/") + "/automappingRegions.png", mapLayer
+        originalRegionsFile, self._mapLayer, self._version08 = path.abspath(path.dirname(argv[0])).replace("\\", "/") + "/automappingRegions.png", mapLayer, version08
         self.setRegionsLocation(regionsLocation)
         self.copyRegionsImage(originalRegionsFile)
         self.initializeEverything()
@@ -673,6 +689,7 @@ if __name__ == "__main__":
     makeRuleSubCommand.add_argument("-o", "--output", metavar="outputRule", dest="outputRule", default="automappingRule.tmx", help="The output file (the automapping rule). By default, it is \"automappingrule.tmx\", located in the directory in which you launch the script. The script will ask you whether it should overwrite the file if it already exists, unless you used the force option.")
     makeRuleSubCommand.add_argument("-l", "--layer", metavar="mapLayer", dest="mapLayer", default="Tile Layer 1", help="The name of the map layer to consider during the automapping. By default, it is \"Tile Layer 1\".")
     makeRuleSubCommand.add_argument("-r", "--regions", metavar="regionsLocation", dest="regionsLocation", default="", help="The rulemap requires an additional image to work properly. By default, the image is always created in the folder of the rulemap. But if you want to, you can set another location.")
+    makeRuleSubCommand.add_argument("-8", "--v08", dest="version08", action="store_true", help="Formats the rulemap for the 0.8 version of Tiled. By default, the rulemaker formats the rule for the 0.9 version.")
     makeRuleSubCommand.add_argument("-f", "--force", action="store_false", dest="askConfirmation", help="Forces the script to be executed without asking you anything. The script will overwrite the output file without warning you if it already exists. Furthermore, it won't ask add an extension to the output file if it lacks.")
     makeRuleSubCommand.add_argument("-v", "--verbose", action="store_true", help="Starts the program in verbose mode: it prints detailed information on the process.")
     answers = vars(parser.parse_args())
@@ -686,5 +703,5 @@ if __name__ == "__main__":
         tilesetGenerator.launchScript(inputExpandedAutotile, outputTileset, relativePath, askConfirmation, verbose)
     elif command == "makerule":
         ruleMaker, outputRule, inputTileset, mapLayer = RuleMaker("automapping rule", ".tmx"), answers["outputRule"], answers["inputTileset"], answers["mapLayer"]
-        regionsLocation = answers["regionsLocation"]
-        ruleMaker.launchScript(inputTileset, outputRule, mapLayer, regionsLocation, askConfirmation, verbose)
+        regionsLocation, version08 = answers["regionsLocation"], answers["version08"]
+        ruleMaker.launchScript(inputTileset, outputRule, mapLayer, regionsLocation, version08, askConfirmation, verbose)
