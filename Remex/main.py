@@ -550,9 +550,9 @@ class RuleMaker(Script):
 
     def _getGidWithLayerAndPosition(self, layerName, x, y, groupX):
         fullOrEmptyTile = self._layerTiles[layerName][x,y][groupX]
-        if fullOrEmptyTile == 1 and layerName == "regions": #Sur la couche de régions, un tile plein vient du tileset spécial automapping, dont le seul tile a pour gid 48
+        if fullOrEmptyTile == 1 and layerName == "regions": #On the regions layer, a full tile comes from the automapping tileset, and it's the only tile whose gid is 49
             gid = 49
-        elif fullOrEmptyTile == 1 and layerName == "input_" + self._mapLayer: #Sur la couche d'Input, le tile rempli a la valeur du tile actuel de l'autotile (une couche d'input par autotile)
+        elif fullOrEmptyTile == 1 and layerName == "input_" + self._mapLayer: #On the input layers, the full tile has the value of the current tile of the autotile set (an input layer per autotile)
             gid = self._inputLayerTileCurrentGid
         elif fullOrEmptyTile == 0:
             gid = 0
@@ -567,13 +567,13 @@ class RuleMaker(Script):
                     groupX = 0
                     while groupX < 4:
                         if groupX < 3:
-                            if layerName == "regions" and y < 8: #Dans la première partie de la couche de régions, on prend le tile de régions dans tous les cas
+                            if layerName == "regions" and y < 8: #In the first part of the regions layer, we use only the regions tile
                                 tile = self._makeTile("Regions")
-                            elif layerName == "output_" + self._mapLayer and not (groupX == 1 and groupY == 1): #Sur la couche d'output, quand on n'est pas au milieu du groupe, tile vide...
+                            elif layerName == "output_" + self._mapLayer and not (groupX == 1 and groupY == 1): #On the output layer, when we're not in the middle of the group, empty tile...
                                 tile = self._makeTile("Empty")
-                            elif layerName == "output_" + self._mapLayer and groupX == 1 and groupY == 1:#...Mais quand on y est, on prend la valeur du tile output du groupe
+                            elif layerName == "output_" + self._mapLayer and groupX == 1 and groupY == 1:#...But when we're in the middle, we use the value of the output tile of the group
                                 tile = self._makeTile(groupId+1)
-                            else: #Pour le reste, il faut utiliser les schémas définis
+                            else: #For the rest, we use the schemes we have defined
                                 tile = self._makeTile( self._getGidWithLayerAndPosition(layerName, x, y, groupX) )
                         else:
                             tile = self._makeTile("Empty")
